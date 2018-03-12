@@ -1,4 +1,4 @@
-;CREATE TABLE state (
+CREATE TABLE state (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL
 );
