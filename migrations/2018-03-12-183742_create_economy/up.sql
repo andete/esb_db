@@ -1,0 +1,17 @@
+CREATE TABLE economy (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR NOT NULL
+);
+
+INSERT INTO economy (id, name) VALUES
+       (1, 'Agriculture'),
+       (2, 'Extraction'),
+       (3, 'High Tech'),
+       (4, 'Industrial'),
+       (5, 'Military'),
+       (6, 'Refinery'),
+       (7, 'Service'),
+       (8, 'Terraforming'),
+       (9, 'Tourism')
+       (10, 'None'),
+       (11, 'Colony')
