@@ -12,6 +12,6 @@ INSERT INTO economy (id, name) VALUES
        (6, 'Refinery'),
        (7, 'Service'),
        (8, 'Terraforming'),
-       (9, 'Tourism')
+       (9, 'Tourism'),
        (10, 'None'),
        (11, 'Colony')
