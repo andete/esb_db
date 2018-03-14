@@ -14,7 +14,8 @@ CREATE TABLE system (
   controlling_minor_faction_id SERIAL, -- TODO REF
   reserve_type_id SERIAL REFERENCES reserve_type (id),
   is_populated BOOLEAN DEFAULT FALSE,
-  edsm_id SERIAL
+  edsm_id SERIAL,
+  updated_at TIMESTAMP
 );
 
 CREATE UNIQUE INDEX system_name_idx ON system (name);
