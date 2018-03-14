@@ -1,7 +1,9 @@
 CREATE TABLE economy (
   id SERIAL PRIMARY KEY,
-  name VARCHAR NOT NULL
+  name VARCHAR NOT NULL UNIQUE
 );
+
+CREATE UNIQUE INDEX economy_name_idx ON economy (name);
 
 INSERT INTO economy (id, name) VALUES
        (1, 'Agriculture'),
