@@ -1,12 +1,12 @@
-extern crate bgs_db;
+extern crate esb_db;
 extern crate diesel;
 
-use self::bgs_db::*;
+use self::esb_db::*;
 use self::models::*;
 use self::diesel::prelude::*;
 
 fn main() {
-    use bgs_db::schema::state::dsl::*;
+    use esb_db::schema::state::dsl::*;
 
     let connection = establish_connection();
     let results = state
