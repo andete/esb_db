@@ -15,7 +15,7 @@ CREATE TABLE system (
   reserve_type_id SERIAL REFERENCES reserve_type (id),
   is_populated BOOLEAN DEFAULT FALSE,
   edsm_id SERIAL,
-  updated_at TIMESTAMP
+  updated_at TIMESTAMPTZ
 );
 
 CREATE UNIQUE INDEX system_name_idx ON system (name);
