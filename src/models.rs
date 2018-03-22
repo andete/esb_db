@@ -1,5 +1,7 @@
 use chrono::{DateTime, TimeZone, Utc};
 
+use super::schema::system;
+
 #[derive(Debug, Queryable)]
 pub struct Allegiance {
     pub id: i32,
@@ -49,12 +51,13 @@ pub struct State {
     pub name: String,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, Insertable)]
+#[table_name="system"]
 pub struct System {
     pub id: i32,
     pub name: String,
-    pub allegiance_id: i32,
-    pub state_id: i32,
+    pub allegiance_id: Option<i32>,
+    pub state_id: Option<i32>,
     pub government_id: Option<i32>,
     pub security_id: Option<i32>,
     pub needs_permit: Option<bool>,
@@ -67,7 +70,7 @@ pub struct System {
     pub reserve_type_id: Option<i32>,
     pub is_populated: Option<bool>,
     pub edsm_id: Option<i32>,
-    pub updated_at: DateTime<Utc>,
+    pub updated_at: Option<DateTime<Utc>>,
 }
 
 #[derive(Debug, Queryable)]

@@ -1,6 +1,8 @@
 use chrono::{DateTime, Utc, TimeZone};
 use serde::{Deserialize, Deserializer};
 
+use models;
+
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct System {
@@ -34,6 +36,30 @@ pub struct System {
     #[serde(deserialize_with = "deserialize_datetime")]
     pub updated_at: DateTime<Utc>,
     pub minor_faction_presences:Vec<MinorFactionPresence>,
+}
+
+impl Into<models::System> for System {
+    fn into(self) -> models::System {
+        models::System {
+            id:self.id,
+            name:self.name,
+            allegiance_id:self.allegiance_id,
+            state_id:self.state_id,
+            government_id:self.government_id,
+            security_id:self.security_id,
+            needs_permit:self.needs_permit,
+            power_state_id:self.power_state_id,
+            x:self.x,
+            y:self.y,
+            z:self.z,
+            simbad_ref:self.simbad_ref,
+            controlling_minor_faction_id:self.controlling_minor_faction_id,
+            reserve_type_id:self.reserve_type_id,
+            is_populated:self.is_populated,
+            edsm_id:self.edsm_id,
+            updated_at:Some(self.updated_at),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
