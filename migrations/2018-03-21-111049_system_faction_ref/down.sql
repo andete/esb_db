@@ -1,0 +1,2 @@
+ALTER TABLE system
+DROP CONSTRAINT system_controlling_minor_faction_id_fkey;
