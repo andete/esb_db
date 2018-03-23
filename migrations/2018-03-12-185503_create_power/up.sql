@@ -1,7 +1,7 @@
 CREATE TABLE power (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL UNIQUE,
-  allegiance_id SERIAL REFERENCES allegiance (id)
+  allegiance_id INTEGER REFERENCES allegiance (id)
 );
 
 CREATE UNIQUE INDEX power_name_idx ON power (name);

@@ -1,10 +1,10 @@
 CREATE TABLE faction (
   id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL UNIQUE,
-  allegiance_id SERIAL REFERENCES allegiance (id),
-  state_id SERIAL REFERENCES state (id),
-  government_id SERIAL REFERENCES government (id),
-  home_system_id SERIAL REFERENCES system (id),
+  allegiance_id INTEGER REFERENCES allegiance (id),
+  state_id INTEGER REFERENCES state (id),
+  government_id INTEGER REFERENCES government (id),
+  home_system_id INTEGER REFERENCES system (id),
   is_player_faction BOOLEAN,
   updated_at TIMESTAMPTZ
 );

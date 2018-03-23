@@ -13,6 +13,19 @@ table! {
 }
 
 table! {
+    faction (id) {
+        id -> Int4,
+        name -> Varchar,
+        allegiance_id -> Nullable<Int4>,
+        state_id -> Nullable<Int4>,
+        government_id -> Nullable<Int4>,
+        home_system_id -> Nullable<Int4>,
+        is_player_faction -> Nullable<Bool>,
+        updated_at -> Nullable<Timestamptz>,
+    }
+}
+
+table! {
     government (id) {
         id -> Int4,
         name -> Varchar,
@@ -23,7 +36,7 @@ table! {
     power (id) {
         id -> Int4,
         name -> Varchar,
-        allegiance_id -> Int4,
+        allegiance_id -> Nullable<Int4>,
     }
 }
 
@@ -77,6 +90,10 @@ table! {
     }
 }
 
+joinable!(faction -> allegiance (allegiance_id));
+joinable!(faction -> government (government_id));
+joinable!(faction -> state (state_id));
+joinable!(faction -> system (home_system_id));
 joinable!(power -> allegiance (allegiance_id));
 joinable!(system -> allegiance (allegiance_id));
 joinable!(system -> government (government_id));
@@ -88,6 +105,7 @@ joinable!(system -> state (state_id));
 allow_tables_to_appear_in_same_query!(
     allegiance,
     economy,
+    faction,
     government,
     power,
     power_state,

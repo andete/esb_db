@@ -1,4 +1,4 @@
-use chrono::{DateTime, TimeZone, Utc};
+use chrono::{DateTime, Utc};
 
 use super::schema::system;
 
@@ -51,7 +51,7 @@ pub struct State {
     pub name: String,
 }
 
-#[derive(Debug, Queryable, Insertable)]
+#[derive(Debug, Queryable, Insertable, AsChangeset)]
 #[table_name="system"]
 pub struct System {
     pub id: i32,
