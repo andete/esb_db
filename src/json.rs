@@ -71,6 +71,38 @@ pub struct MinorFactionPresence {
     pub state:Option<String>,
 }
 
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Faction {
+    pub id:i32,
+    pub name:String,
+    pub allegiance_id: Option<i32>,
+    pub allegiance: Option<String>,
+    pub state_id: Option<i32>,
+    pub state: Option<String>,
+    pub government_id: Option<i32>,
+    pub government: Option<String>,
+    pub home_system_id: Option<i32>,
+    pub is_player_faction: bool,
+    #[serde(deserialize_with = "deserialize_datetime")]
+    pub updated_at: DateTime<Utc>,
+}
+
+impl Into<models::Faction> for Faction {
+    fn into(self) -> models::Faction {
+        models::Faction {
+            id:self.id,
+            name:self.name,
+            allegiance_id:self.allegiance_id,
+            state_id:self.state_id,
+            government_id:self.government_id,
+            home_system_id:self.home_system_id,
+            is_player_faction:self.is_player_faction,
+            updated_at:self.updated_at,
+        }
+    }
+}
+
 fn deserialize_datetime<'de, D>(deserializer:D) -> Result<DateTime<Utc>, D::Error>
     where D: Deserializer<'de>
 {

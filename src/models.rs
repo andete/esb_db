@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 
 use super::schema::system;
+use super::schema::faction;
 
 #[derive(Debug, Queryable)]
 pub struct Allegiance {
@@ -73,14 +74,15 @@ pub struct System {
     pub updated_at: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, Insertable, AsChangeset)]
+#[table_name="faction"]
 pub struct Faction {
     pub id:i32,
     pub name:String,
-    pub allegiance_id: i32,
-    pub state_id: i32,
-    pub government_id: i32,
-    pub home_system_id: i32,
+    pub allegiance_id: Option<i32>,
+    pub state_id: Option<i32>,
+    pub government_id: Option<i32>,
+    pub home_system_id: Option<i32>,
     pub is_player_faction: bool,
     pub updated_at: DateTime<Utc>,
 }

@@ -9,4 +9,5 @@ INSERT INTO allegiance (id, name) VALUES
        (1, 'Alliance'),
        (2, 'Empire'),
        (3, 'Federation'),
-       (4, 'Independant')
+       (4, 'Independant'),
+       (7, 'Pilots Federation'),

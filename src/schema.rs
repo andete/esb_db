@@ -20,8 +20,8 @@ table! {
         state_id -> Nullable<Int4>,
         government_id -> Nullable<Int4>,
         home_system_id -> Nullable<Int4>,
-        is_player_faction -> Nullable<Bool>,
-        updated_at -> Nullable<Timestamptz>,
+        is_player_faction -> Bool,
+        updated_at -> Timestamptz,
     }
 }
 

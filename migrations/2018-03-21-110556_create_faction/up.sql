@@ -5,8 +5,8 @@ CREATE TABLE faction (
   state_id INTEGER REFERENCES state (id),
   government_id INTEGER REFERENCES government (id),
   home_system_id INTEGER REFERENCES system (id),
-  is_player_faction BOOLEAN,
-  updated_at TIMESTAMPTZ
+  is_player_faction BOOLEAN NOT NULL,
+  updated_at TIMESTAMPTZ NOT NULL
 );
 
 CREATE UNIQUE INDEX faction_name_idx ON faction (name);

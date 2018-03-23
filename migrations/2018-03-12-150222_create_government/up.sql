@@ -17,4 +17,5 @@ INSERT INTO government (id, name) VALUES
        (144, 'Patronage'),
        (150, 'Prison Colony'),
        (160, 'Theocracy'),
+       (192, 'Engineer'),
        (208, 'Prison')

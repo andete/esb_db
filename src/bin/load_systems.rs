@@ -68,7 +68,7 @@ fn main() {
         }
 
         if !system_exists {
-            info!("Inserting: {:?}", s);
+            //info!("Inserting: {:?}", s);
             let _:System = diesel::insert_into(system::table)
                 .values(&s)
                 .get_result(&connection)
