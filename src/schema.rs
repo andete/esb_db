@@ -6,6 +6,14 @@ table! {
 }
 
 table! {
+    controlling (stamp) {
+        stamp -> Timestamptz,
+        system_id -> Nullable<Int4>,
+        faction_id -> Nullable<Int4>,
+    }
+}
+
+table! {
     economy (id) {
         id -> Int4,
         name -> Varchar,
@@ -82,7 +90,6 @@ table! {
         y -> Float8,
         z -> Float8,
         simbad_ref -> Nullable<Varchar>,
-        controlling_minor_faction_id -> Nullable<Int4>,
         reserve_type_id -> Nullable<Int4>,
         is_populated -> Nullable<Bool>,
         edsm_id -> Nullable<Int4>,
@@ -90,6 +97,8 @@ table! {
     }
 }
 
+joinable!(controlling -> faction (faction_id));
+joinable!(controlling -> system (system_id));
 joinable!(faction -> allegiance (allegiance_id));
 joinable!(faction -> government (government_id));
 joinable!(faction -> state (state_id));
@@ -104,6 +113,7 @@ joinable!(system -> state (state_id));
 
 allow_tables_to_appear_in_same_query!(
     allegiance,
+    controlling,
     economy,
     faction,
     government,

@@ -53,7 +53,6 @@ impl Into<models::System> for System {
             y:self.y,
             z:self.z,
             simbad_ref:self.simbad_ref,
-            controlling_minor_faction_id:self.controlling_minor_faction_id,
             reserve_type_id:self.reserve_type_id,
             is_populated:self.is_populated,
             edsm_id:self.edsm_id,

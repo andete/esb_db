@@ -37,8 +37,8 @@ fn main() {
     
     use esb_db::schema::system::dsl::*;
     use esb_db::schema::system;
-    use esb_db::schema::faction;
-    use diesel::dsl::count_star;
+    //use esb_db::schema::faction;
+    //use diesel::dsl::count_star;
 
     let connection = establish_connection();
     let mut c_stored:i32 = 0;
@@ -53,7 +53,8 @@ fn main() {
             .expect("Error loading system");
 
         let system_exists = !results.is_empty();
-        
+
+        /* TODO: rework handling of controlling faction
         let faction_exists = if let Some(faction_id) = s.controlling_minor_faction_id {
             faction::dsl::faction.filter(faction::dsl::id.eq(faction_id))
             .select(count_star())
@@ -66,6 +67,7 @@ fn main() {
         if !faction_exists {
             s.controlling_minor_faction_id = None;
         }
+         */
 
         if !system_exists {
             //info!("Inserting: {:?}", s);

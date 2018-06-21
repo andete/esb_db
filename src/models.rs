@@ -67,7 +67,6 @@ pub struct System {
     pub y: f64,
     pub z: f64,
     pub simbad_ref: Option<String>,
-    pub controlling_minor_faction_id: Option<i32>,
     pub reserve_type_id: Option<i32>,
     pub is_populated: Option<bool>,
     pub edsm_id: Option<i32>,
