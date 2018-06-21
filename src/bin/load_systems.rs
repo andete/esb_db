@@ -93,7 +93,7 @@ fn main() {
                 (res.faction_id != j_fid, false)
             };
             if insert {
-                let c = Controlling {
+                let c = ControllingInsert {
                     stamp:s.updated_at.unwrap(),
                     system_id:s.id,
                     faction_id:j_fid,

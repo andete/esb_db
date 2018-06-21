@@ -88,9 +88,19 @@ pub struct Faction {
     pub is_player_faction: bool,
     pub updated_at: DateTime<Utc>,
 }
-#[derive(Debug, Queryable, Insertable)]
+#[derive(Debug,Queryable,Associations)]
+#[belongs_to(System)]
 #[table_name="controlling"]
 pub struct Controlling {
+    pub id:i32,
+    pub stamp: DateTime<Utc>,
+    pub system_id: i32,
+    pub faction_id: Option<i32>,
+}
+
+#[derive(Debug, Insertable)]
+#[table_name="controlling"]
+pub struct ControllingInsert {
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
     pub faction_id: Option<i32>,

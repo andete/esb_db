@@ -6,7 +6,8 @@ table! {
 }
 
 table! {
-    controlling (stamp) {
+    controlling (id) {
+        id -> Int4,
         stamp -> Timestamptz,
         system_id -> Int4,
         faction_id -> Nullable<Int4>,
