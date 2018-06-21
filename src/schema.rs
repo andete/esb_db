@@ -8,7 +8,7 @@ table! {
 table! {
     controlling (stamp) {
         stamp -> Timestamptz,
-        system_id -> Nullable<Int4>,
+        system_id -> Int4,
         faction_id -> Nullable<Int4>,
     }
 }

@@ -2,8 +2,9 @@ use chrono::{DateTime, Utc};
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 
-use super::schema::system;
+use super::schema::controlling;
 use super::schema::faction;
+use super::schema::system;
 
 #[derive(Debug, Queryable)]
 pub struct Allegiance {
@@ -87,14 +88,25 @@ pub struct Faction {
     pub is_player_faction: bool,
     pub updated_at: DateTime<Utc>,
 }
+#[derive(Debug, Queryable, Insertable)]
+#[table_name="controlling"]
+pub struct Controlling {
+    pub stamp: DateTime<Utc>,
+    pub system_id: i32,
+    pub faction_id: Option<i32>,
+}
 
 impl Faction {
-    pub fn exists(connection:&PgConnection, faction_id:i32) -> QueryResult<bool> {
-        use schema::faction;
-        use diesel::dsl::count_star;
-        let c:i64 = faction::dsl::faction.filter(faction::dsl::id.eq(faction_id))
-            .select(count_star())
-            .first(connection)?;
-        Ok(c > 0)
+    pub fn exists(connection:&PgConnection, faction_id:Option<i32>) -> QueryResult<bool> {
+        if let Some(faction_id) = faction_id {
+            use schema::faction;
+            use diesel::dsl::count_star;
+            let c:i64 = faction::dsl::faction.filter(faction::dsl::id.eq(faction_id))
+                .select(count_star())
+                .first(connection)?;
+            Ok(c > 0)
+        } else {
+            Ok(false)
+        }
     }
 }
