@@ -37,14 +37,15 @@ fn main() {
     
     use esb_db::schema::system::dsl::*;
     use esb_db::schema::system;
-    //use esb_db::schema::faction;
-    //use diesel::dsl::count_star;
+    use esb_db::schema::faction;
+    use diesel::dsl::count_star;
 
     let connection = establish_connection();
     let mut c_stored:i32 = 0;
     let mut c_updated:i32 = 0;
     for json_system in json_systems {
         
+        let j_fid = json_system.controlling_minor_faction_id;
         let mut s:System = json_system.into();
 
         let results = system.filter(id.eq(s.id))
@@ -54,20 +55,16 @@ fn main() {
 
         let system_exists = !results.is_empty();
 
-        /* TODO: rework handling of controlling faction
-        let faction_exists = if let Some(faction_id) = s.controlling_minor_faction_id {
-            faction::dsl::faction.filter(faction::dsl::id.eq(faction_id))
-            .select(count_star())
-            .first::<i64>(&connection)
-                .expect("Error finding faction") > 0
+        let faction_exists = if let Some(faction_id) = j_fid {
+            Faction::exists(&connection, faction_id).expect("Error finding faction")
         } else {
             false
         };
 
-        if !faction_exists {
-            s.controlling_minor_faction_id = None;
+        if faction_exists {
+            // TODO
+            // check if controlling faction changed, if so add entry to the controlling table
         }
-         */
 
         if !system_exists {
             //info!("Inserting: {:?}", s);

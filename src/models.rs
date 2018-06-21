@@ -1,4 +1,6 @@
 use chrono::{DateTime, Utc};
+use diesel::prelude::*;
+use diesel::pg::PgConnection;
 
 use super::schema::system;
 use super::schema::faction;
@@ -84,4 +86,15 @@ pub struct Faction {
     pub home_system_id: Option<i32>,
     pub is_player_faction: bool,
     pub updated_at: DateTime<Utc>,
+}
+
+impl Faction {
+    pub fn exists(connection:&PgConnection, faction_id:i32) -> QueryResult<bool> {
+        use schema::faction;
+        use diesel::dsl::count_star;
+        let c:i64 = faction::dsl::faction.filter(faction::dsl::id.eq(faction_id))
+            .select(count_star())
+            .first(connection)?;
+        Ok(c > 0)
+    }
 }
