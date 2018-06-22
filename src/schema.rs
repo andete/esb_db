@@ -65,6 +65,16 @@ table! {
 }
 
 table! {
+    presence (id) {
+        id -> Int4,
+        stamp -> Timestamptz,
+        faction_id -> Int4,
+        state_id -> Nullable<Int4>,
+        influence -> Nullable<Float8>,
+    }
+}
+
+table! {
     reserve_type (id) {
         id -> Int4,
         name -> Varchar,
@@ -120,6 +130,8 @@ joinable!(faction -> system (home_system_id));
 joinable!(faction_state -> faction (faction_id));
 joinable!(faction_state -> state (state_id));
 joinable!(power -> allegiance (allegiance_id));
+joinable!(presence -> faction (faction_id));
+joinable!(presence -> state (state_id));
 joinable!(system -> reserve_type (reserve_type_id));
 joinable!(system -> security (security_id));
 joinable!(system_power -> allegiance (allegiance_id));
@@ -135,6 +147,7 @@ allow_tables_to_appear_in_same_query!(
     government,
     power,
     power_state,
+    presence,
     reserve_type,
     security,
     state,
