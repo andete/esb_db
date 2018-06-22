@@ -42,8 +42,10 @@ fn main() {
     let mut c_updated:i32 = 0;
     for json_system in json_systems {
         
-        let j_fid = json_system.controlling_minor_faction_id;
-        let j_fname = json_system.controlling_minor_faction.clone();
+        let controlling_minor_faction_id = json_system.controlling_minor_faction_id;
+        let controlling_minor_faction_name = json_system.controlling_minor_faction.clone();
+        let power_state_id = json_system.power_state_id;
+        let allegiance_id = json_system.power_state_id;
         let mut s:System = json_system.into();
 
         let results = {
@@ -78,7 +80,7 @@ fn main() {
         // if we know about the controlling faction
         // check what was the last known controlling faction
         // and add new entry if it changed
-        if Faction::exists(&connection, j_fid).expect("Error finding faction") {
+        if Faction::exists(&connection, controlling_minor_faction_id).expect("Error finding faction") {
             use esb_db::schema::controlling::dsl::*;
             let results = controlling.filter(system_id.eq(s.id))
                 .order(stamp.desc())
@@ -90,24 +92,26 @@ fn main() {
             } else {
                 let res = results.iter().next().unwrap();
                 // check stamp as well to see if it is newer?
-                (res.faction_id != j_fid, false)
+                (res.faction_id != controlling_minor_faction_id, false)
             };
             if insert {
                 let c = ControllingInsert {
                     stamp:s.updated_at.unwrap(),
                     system_id:s.id,
-                    faction_id:j_fid,
+                    faction_id:controlling_minor_faction_id,
                 };
                 diesel::insert_into(esb_db::schema::controlling::table)
                     .values(&c)
                     .execute(&connection)
                     .expect("Error saving controlling");
                 if !first {
-                    let name = j_fname.unwrap_or("None".into());
+                    let name = controlling_minor_faction_name.unwrap_or("None".into());
                     info!("System {} new controlling minor faction {}.", s.name, name);
                 }
             }
         }
+
+        // check if the Power state has been changed and store it if needed
     }
     info!("{} systems stored.", c_stored);
     info!("{} systems updated.", c_updated);
