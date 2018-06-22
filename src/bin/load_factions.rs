@@ -44,7 +44,9 @@ fn main() {
     let mut c_stored:i32 = 0;
     let mut c_updated:i32 = 0;
     for json_faction in json_factions {
-        
+
+        let state_id = json_faction.state_id;
+        let state_name = json_faction.state.clone();
         let mut f:Faction = json_faction.into();
 
         // insert or update faction as needed
@@ -68,7 +70,33 @@ fn main() {
         }
 
         // update faction state if needed
-        {
+        if let Some(state_id) = state_id {
+            use esb_db::schema::faction_state::dsl::{stamp, faction_state, faction_id};
+            let result = faction_state.filter(faction_id.eq(f.id))
+                .order(stamp.desc())
+                .first::<FactionState>(&connection)
+                .optional()
+                .expect("Error loading faction state");
+            let (insert,first) = if let Some(res) = result {
+                (res.state_id != state_id, false)
+            } else {
+                (true,true)
+            };
+            if insert {
+                let i = FactionStateInsert {
+                    faction_id:f.id,
+                    state_id:state_id,
+                    stamp:f.updated_at,
+                };
+                diesel::insert_into(esb_db::schema::faction_state::table)
+                    .values(&i)
+                    .execute(&connection)
+                    .expect("Error saving faction_state");
+                if !first {
+                    let state_name = state_name.unwrap_or("None".into());
+                    info!("Faction {} new state {}.", f.name, state_name);
+                }
+            }
         }
     }
     info!("{} factions stored.", c_stored);
