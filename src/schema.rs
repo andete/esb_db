@@ -26,11 +26,19 @@ table! {
         id -> Int4,
         name -> Varchar,
         allegiance_id -> Nullable<Int4>,
-        state_id -> Nullable<Int4>,
         government_id -> Nullable<Int4>,
         home_system_id -> Nullable<Int4>,
         is_player_faction -> Bool,
         updated_at -> Timestamptz,
+    }
+}
+
+table! {
+    faction_state (id) {
+        id -> Int4,
+        stamp -> Timestamptz,
+        faction_id -> Int4,
+        state_id -> Int4,
     }
 }
 
@@ -108,8 +116,9 @@ joinable!(controlling -> faction (faction_id));
 joinable!(controlling -> system (system_id));
 joinable!(faction -> allegiance (allegiance_id));
 joinable!(faction -> government (government_id));
-joinable!(faction -> state (state_id));
 joinable!(faction -> system (home_system_id));
+joinable!(faction_state -> faction (faction_id));
+joinable!(faction_state -> state (state_id));
 joinable!(power -> allegiance (allegiance_id));
 joinable!(system -> reserve_type (reserve_type_id));
 joinable!(system -> security (security_id));
@@ -122,6 +131,7 @@ allow_tables_to_appear_in_same_query!(
     controlling,
     economy,
     faction,
+    faction_state,
     government,
     power,
     power_state,

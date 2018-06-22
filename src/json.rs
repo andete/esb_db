@@ -89,7 +89,6 @@ impl Into<models::Faction> for Faction {
             id:self.id,
             name:self.name,
             allegiance_id:self.allegiance_id,
-            state_id:self.state_id,
             government_id:self.government_id,
             home_system_id:self.home_system_id,
             is_player_faction:self.is_player_faction,

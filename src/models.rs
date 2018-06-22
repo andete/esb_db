@@ -79,7 +79,6 @@ pub struct Faction {
     pub id:i32,
     pub name:String,
     pub allegiance_id: Option<i32>,
-    pub state_id: Option<i32>,
     pub government_id: Option<i32>,
     pub home_system_id: Option<i32>,
     pub is_player_faction: bool,
