@@ -82,7 +82,7 @@ fn main() {
         // if we know about the controlling faction
         // check what was the last known controlling faction
         // and add new entry if it changed
-        if Faction::exists(&connection, controlling_minor_faction_id).expect("Error finding faction") {
+        if Faction::exists(&connection, controlling_minor_faction_id).expect("Error finding faction").is_some() {
             use esb_db::schema::controlling::dsl::*;
             let results = controlling.filter(system_id.eq(s.id))
                 .order(stamp.desc())

@@ -144,16 +144,15 @@ pub struct FactionStateInsert {
 
 
 impl Faction {
-    pub fn exists(connection:&PgConnection, faction_id:Option<i32>) -> QueryResult<bool> {
+    pub fn exists(connection:&PgConnection, faction_id:Option<i32>) -> QueryResult<Option<Faction>> {
         if let Some(faction_id) = faction_id {
-            use schema::faction;
-            use diesel::dsl::count_star;
-            let c:i64 = faction::dsl::faction.filter(faction::dsl::id.eq(faction_id))
-                .select(count_star())
-                .first(connection)?;
-            Ok(c > 0)
+            use schema::faction::dsl::{faction,id};
+            let result = faction.filter(id.eq(faction_id))
+                .limit(1)
+                .first::<Faction>(connection).optional()?;
+            Ok(result)
         } else {
-            Ok(false)
+            Ok(None)
         }
     }
 }

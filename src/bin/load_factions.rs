@@ -1,3 +1,5 @@
+// (c) 2018 Joost Yervante Damad <joost@damad.be>
+
 extern crate badlog;
 #[macro_use]
 extern crate log;
@@ -43,31 +45,24 @@ fn main() {
     let mut c_updated:i32 = 0;
     for json_faction in json_factions {
         
-        let mut s:Faction = json_faction.into();
+        let mut f:Faction = json_faction.into();
 
-        let results = faction.filter(id.eq(s.id))
-            .limit(1)
-            .load::<Faction>(&connection)
-            .expect("Error loading faction");
-
-        let faction_exists = !results.is_empty();
+        let existing_faction_opt = Faction::exists(&connection, Some(f.id)).expect("Error finding faction");
         
-        if !faction_exists {
-            //info!("Inserting: {:?}", s);
-            let _:Faction = diesel::insert_into(faction::table)
-                .values(&s)
-                .get_result(&connection)
-                .expect("Error saving faction");
-            c_stored += 1;
-        } else {
-            let existing_faction = &results[0];
-            if existing_faction.updated_at < s.updated_at || force {
-                let _:Faction = diesel::update(faction.filter(id.eq(s.id)))
-                    .set(&s)
+        if let Some(existing_faction) = existing_faction_opt {
+            if existing_faction.updated_at < f.updated_at || force {
+                let _:Faction = diesel::update(faction.filter(id.eq(f.id)))
+                    .set(&f)
                     .get_result(&connection)
                     .expect("Error updating faction");
                 c_updated += 1;
             }
+        } else {
+            let _:Faction = diesel::insert_into(faction::table)
+                .values(&f)
+                .get_result(&connection)
+                .expect("Error saving faction");
+            c_stored += 1;
         }
     }
     info!("{} factions stored.", c_stored);
