@@ -5,6 +5,7 @@ use diesel::pg::PgConnection;
 use super::schema::controlling;
 use super::schema::faction;
 use super::schema::system;
+use super::schema::system_power;
 
 #[derive(Debug, Queryable)]
 pub struct Allegiance {
@@ -84,6 +85,7 @@ pub struct Faction {
     pub is_player_faction: bool,
     pub updated_at: DateTime<Utc>,
 }
+
 #[derive(Debug,Queryable,Associations)]
 #[belongs_to(System)]
 #[table_name="controlling"]
@@ -100,6 +102,26 @@ pub struct ControllingInsert {
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
     pub faction_id: Option<i32>,
+}
+
+#[derive(Debug,Queryable,Associations)]
+#[belongs_to(System)]
+#[table_name="system_power"]
+pub struct SystemPower {
+    pub id:i32,
+    pub stamp: DateTime<Utc>,
+    pub system_id: i32,
+    pub allegiance_id: Option<i32>,
+    pub power_state_id: Option<i32>,
+}
+
+#[derive(Debug, Insertable)]
+#[table_name="system_power"]
+pub struct SystemPowerInsert {
+    pub stamp: DateTime<Utc>,
+    pub system_id: i32,
+    pub allegiance_id: Option<i32>,
+    pub power_state_id: Option<i32>,
 }
 
 impl Faction {

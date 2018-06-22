@@ -94,6 +94,16 @@ table! {
     }
 }
 
+table! {
+    system_power (id) {
+        id -> Int4,
+        stamp -> Timestamptz,
+        system_id -> Int4,
+        allegiance_id -> Int4,
+        power_state_id -> Int4,
+    }
+}
+
 joinable!(controlling -> faction (faction_id));
 joinable!(controlling -> system (system_id));
 joinable!(faction -> allegiance (allegiance_id));
@@ -103,6 +113,9 @@ joinable!(faction -> system (home_system_id));
 joinable!(power -> allegiance (allegiance_id));
 joinable!(system -> reserve_type (reserve_type_id));
 joinable!(system -> security (security_id));
+joinable!(system_power -> allegiance (allegiance_id));
+joinable!(system_power -> power_state (power_state_id));
+joinable!(system_power -> system (system_id));
 
 allow_tables_to_appear_in_same_query!(
     allegiance,
@@ -116,4 +129,5 @@ allow_tables_to_appear_in_same_query!(
     security,
     state,
     system,
+    system_power,
 );
