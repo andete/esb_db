@@ -45,7 +45,9 @@ fn main() {
         let controlling_minor_faction_id = json_system.controlling_minor_faction_id;
         let controlling_minor_faction_name = json_system.controlling_minor_faction.clone();
         let power_state_id = json_system.power_state_id;
-        let allegiance_id = json_system.power_state_id;
+        let power_state_name = json_system.power_state.clone();
+        let allegiance_id = json_system.allegiance_id;
+        let power_name = json_system.allegiance.clone();
         let mut s:System = json_system.into();
 
         let results = {
@@ -112,6 +114,40 @@ fn main() {
         }
 
         // check if the Power state has been changed and store it if needed
+        {
+            use esb_db::schema::system_power::dsl;
+            let results = dsl::system_power.filter(dsl::system_id.eq(s.id))
+                .order(dsl::stamp.desc())
+                .limit(1)
+                .load::<SystemPower>(&connection)
+                .expect("Error loading system power info");
+            let (insert,first) = if results.is_empty() {
+                (true,true)
+            } else {
+                let res:&SystemPower = results.iter().next().unwrap();
+                // check stamp as well to see if it is newer?
+                let changed = res.allegiance_id != allegiance_id
+                    || res.power_state_id != power_state_id;
+                (changed, false)
+            };
+            if insert {
+                let c = SystemPowerInsert {
+                    stamp:s.updated_at.unwrap(),
+                    system_id:s.id,
+                    power_state_id: power_state_id,
+                    allegiance_id: allegiance_id,
+                };
+                diesel::insert_into(esb_db::schema::system_power::table)
+                    .values(&c)
+                    .execute(&connection)
+                    .expect("Error saving system_power");
+                if !first {
+                    let name = power_name.unwrap_or("None".into());
+                    let state = power_state_name.unwrap_or("None".into());
+                    info!("System {} new power state {}:{}", s.name, name, state);
+                }
+            }
+        }
     }
     info!("{} systems stored.", c_stored);
     info!("{} systems updated.", c_updated);

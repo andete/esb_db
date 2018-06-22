@@ -99,8 +99,8 @@ table! {
         id -> Int4,
         stamp -> Timestamptz,
         system_id -> Int4,
-        allegiance_id -> Int4,
-        power_state_id -> Int4,
+        allegiance_id -> Nullable<Int4>,
+        power_state_id -> Nullable<Int4>,
     }
 }
 
