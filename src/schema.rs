@@ -68,9 +68,10 @@ table! {
     presence (id) {
         id -> Int4,
         stamp -> Timestamptz,
+        system_id -> Int4,
         faction_id -> Int4,
         state_id -> Nullable<Int4>,
-        influence -> Nullable<Float8>,
+        influence -> Nullable<Float4>,
     }
 }
 
@@ -132,6 +133,7 @@ joinable!(faction_state -> state (state_id));
 joinable!(power -> allegiance (allegiance_id));
 joinable!(presence -> faction (faction_id));
 joinable!(presence -> state (state_id));
+joinable!(presence -> system (system_id));
 joinable!(system -> reserve_type (reserve_type_id));
 joinable!(system -> security (security_id));
 joinable!(system_power -> allegiance (allegiance_id));

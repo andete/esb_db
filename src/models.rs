@@ -5,6 +5,7 @@ use diesel::pg::PgConnection;
 use super::schema::controlling;
 use super::schema::faction;
 use super::schema::faction_state;
+use super::schema::presence;
 use super::schema::system;
 use super::schema::system_power;
 
@@ -142,6 +143,27 @@ pub struct FactionStateInsert {
     pub state_id: i32,
 }
 
+#[derive(Debug,Queryable,Associations)]
+#[belongs_to(System)]
+#[table_name="presence"]
+pub struct Presence {
+    pub id:i32,
+    pub stamp: DateTime<Utc>,
+    pub system_id: i32,
+    pub faction_id: i32,
+    pub state_id: Option<i32>,
+    pub influence: Option<f32>,
+}
+
+#[derive(Debug, Insertable)]
+#[table_name="presence"]
+pub struct PresenceInsert {
+    pub stamp: DateTime<Utc>,
+    pub system_id: i32,
+    pub faction_id: i32,
+    pub state_id: Option<i32>,
+    pub influence: Option<f32>,
+}
 
 impl Faction {
     pub fn exists<T>(connection:&PgConnection, faction_id:T) -> QueryResult<Option<Faction>> where T:Into<Option<i32>> {
