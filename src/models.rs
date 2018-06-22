@@ -4,6 +4,7 @@ use diesel::pg::PgConnection;
 
 use super::schema::controlling;
 use super::schema::faction;
+use super::schema::faction_state;
 use super::schema::system;
 use super::schema::system_power;
 
@@ -122,6 +123,25 @@ pub struct SystemPowerInsert {
     pub allegiance_id: Option<i32>,
     pub power_state_id: Option<i32>,
 }
+
+#[derive(Debug,Queryable,Associations)]
+#[belongs_to(Faction)]
+#[table_name="faction_state"]
+pub struct FactionState {
+    pub id:i32,
+    pub stamp: DateTime<Utc>,
+    pub faction_id: i32,
+    pub state_id: i32,
+}
+
+#[derive(Debug, Insertable)]
+#[table_name="faction_state"]
+pub struct FactionStateInsert {
+    pub stamp: DateTime<Utc>,
+    pub faction_id: i32,
+    pub state_id: i32,
+}
+
 
 impl Faction {
     pub fn exists(connection:&PgConnection, faction_id:Option<i32>) -> QueryResult<bool> {
