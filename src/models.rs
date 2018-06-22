@@ -144,8 +144,8 @@ pub struct FactionStateInsert {
 
 
 impl Faction {
-    pub fn exists(connection:&PgConnection, faction_id:Option<i32>) -> QueryResult<Option<Faction>> {
-        if let Some(faction_id) = faction_id {
+    pub fn exists<T>(connection:&PgConnection, faction_id:T) -> QueryResult<Option<Faction>> where T:Into<Option<i32>> {
+        if let Some(faction_id) = faction_id.into() {
             use schema::faction::dsl::{faction,id};
             let result = faction.filter(id.eq(faction_id))
                 .limit(1)

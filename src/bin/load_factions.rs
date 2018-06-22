@@ -47,7 +47,7 @@ fn main() {
         
         let mut f:Faction = json_faction.into();
 
-        let existing_faction_opt = Faction::exists(&connection, Some(f.id)).expect("Error finding faction");
+        let existing_faction_opt = Faction::exists(&connection, f.id).expect("Error finding faction");
         
         if let Some(existing_faction) = existing_faction_opt {
             if existing_faction.updated_at < f.updated_at || force {
