@@ -43,12 +43,8 @@ impl Into<models::System> for System {
         models::System {
             id:self.id,
             name:self.name,
-            allegiance_id:self.allegiance_id,
-            state_id:self.state_id,
-            government_id:self.government_id,
             security_id:self.security_id,
             needs_permit:self.needs_permit,
-            power_state_id:self.power_state_id,
             x:self.x,
             y:self.y,
             z:self.z,

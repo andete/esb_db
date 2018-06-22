@@ -81,12 +81,8 @@ table! {
     system (id) {
         id -> Int4,
         name -> Varchar,
-        allegiance_id -> Nullable<Int4>,
-        state_id -> Nullable<Int4>,
-        government_id -> Nullable<Int4>,
         security_id -> Nullable<Int4>,
         needs_permit -> Nullable<Bool>,
-        power_state_id -> Nullable<Int4>,
         x -> Float8,
         y -> Float8,
         z -> Float8,
@@ -105,12 +101,8 @@ joinable!(faction -> government (government_id));
 joinable!(faction -> state (state_id));
 joinable!(faction -> system (home_system_id));
 joinable!(power -> allegiance (allegiance_id));
-joinable!(system -> allegiance (allegiance_id));
-joinable!(system -> government (government_id));
-joinable!(system -> power_state (power_state_id));
 joinable!(system -> reserve_type (reserve_type_id));
 joinable!(system -> security (security_id));
-joinable!(system -> state (state_id));
 
 allow_tables_to_appear_in_same_query!(
     allegiance,

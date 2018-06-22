@@ -24,14 +24,14 @@ fn main() {
     let n = m.value_of("NAME").unwrap();
     
     use esb_db::schema::system::dsl::*;
-    use esb_db::schema::allegiance;
+    use esb_db::schema::security;
 
     let connection = establish_connection();
     let results = system
-        .inner_join(allegiance::table)
+        .inner_join(security::table)
         .filter(name.eq(n))
         .limit(1)
-        .load::<(System,Allegiance)>(&connection)
+        .load::<(System,Security)>(&connection)
         .expect("Error loading systems");
 
     if results.len() > 0 {

@@ -60,12 +60,8 @@ pub struct State {
 pub struct System {
     pub id: i32,
     pub name: String,
-    pub allegiance_id: Option<i32>,
-    pub state_id: Option<i32>,
-    pub government_id: Option<i32>,
     pub security_id: Option<i32>,
     pub needs_permit: Option<bool>,
-    pub power_state_id: Option<i32>,
     pub x: f64,
     pub y: f64,
     pub z: f64,
