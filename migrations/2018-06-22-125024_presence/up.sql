@@ -1,0 +1,11 @@
+CREATE TABLE presence (
+       id SERIAL PRIMARY KEY,
+       stamp TIMESTAMPTZ NOT NULL,
+       faction_id INTEGER NOT NULL REFERENCES faction (id),
+       state_id INTEGER REFERENCES state (id),
+       influence FLOAT
+       );
+       
+
+CREATE INDEX presence_stamp_idx ON presence (stamp);
+CREATE INDEX presence_faction_idx ON presence (faction_id);
