@@ -84,17 +84,16 @@ fn main() {
         // and add new entry if it changed
         if Faction::exists(&connection, controlling_minor_faction_id).expect("Error finding faction").is_some() {
             use esb_db::schema::controlling::dsl::*;
-            let results = controlling.filter(system_id.eq(s.id))
+            let result = controlling.filter(system_id.eq(s.id))
                 .order(stamp.desc())
-                .limit(1)
-                .load::<Controlling>(&connection)
+                .first::<Controlling>(&connection)
+                .optional()
                 .expect("Error loading controlling info");
-            let (insert,first) = if results.is_empty() {
-                (true,true)
-            } else {
-                let res = results.iter().next().unwrap();
+            let (insert, first) = if let Some(res) = result {
                 // check stamp as well to see if it is newer?
                 (res.faction_id != controlling_minor_faction_id, false)
+            } else {
+                (true,true)
             };
             if insert {
                 let c = ControllingInsert {

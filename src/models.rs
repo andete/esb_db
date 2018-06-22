@@ -148,8 +148,8 @@ impl Faction {
         if let Some(faction_id) = faction_id.into() {
             use schema::faction::dsl::{faction,id};
             let result = faction.filter(id.eq(faction_id))
-                .limit(1)
-                .first::<Faction>(connection).optional()?;
+                .first::<Faction>(connection)
+                .optional()?;
             Ok(result)
         } else {
             Ok(None)

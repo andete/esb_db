@@ -47,6 +47,8 @@ fn main() {
         
         let mut f:Faction = json_faction.into();
 
+        // insert or update faction as needed
+        
         let existing_faction_opt = Faction::exists(&connection, f.id).expect("Error finding faction");
         
         if let Some(existing_faction) = existing_faction_opt {
@@ -63,6 +65,10 @@ fn main() {
                 .get_result(&connection)
                 .expect("Error saving faction");
             c_stored += 1;
+        }
+
+        // update faction state if needed
+        {
         }
     }
     info!("{} factions stored.", c_stored);
