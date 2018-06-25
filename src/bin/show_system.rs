@@ -52,18 +52,46 @@ fn main() {
         println!("permit:      {}", s_o(s.needs_permit));
         println!("reserve:     {}", r.name);
 
-        use esb_db::schema::system_power::dsl::*;
-        let sp = system_power
-            .filter(system_id.eq(s.id))
-            .order(stamp.desc())
-            .inner_join(esb_db::schema::allegiance::table)
-            .inner_join(esb_db::schema::power_state::table)
-            .first::<(SystemPower,Allegiance,PowerState)>(&connection)
-            .optional()
-            .expect("Error loading system power");
+        let sp = {
+            use esb_db::schema::system_power::dsl::*;
+            system_power
+                .filter(system_id.eq(s.id))
+                .order(stamp.desc())
+                .inner_join(esb_db::schema::allegiance::table)
+                .inner_join(esb_db::schema::power_state::table)
+                .first::<(SystemPower,Allegiance,PowerState)>(&connection)
+                .optional()
+                .expect("Error loading system power")
+        };
         if let Some((_sp,al,po)) = sp {
             println!("allegiance:  {}", al.name);
             println!("power_state: {}", po.name);
+        }
+        println!("");
+        let presence = {
+            use esb_db::schema::presence::dsl::*;
+            let p = presence
+                .filter(system_id.eq(s.id))
+                .order(stamp.desc())
+                .first::<Presence>(&connection)
+                .optional()
+                .expect("Error loading first presence");
+            if let Some(p) = p {
+                presence
+                    .filter(system_id.eq(s.id))
+                    .filter(stamp.eq(p.stamp))
+                    .order(influence.desc())
+                    .inner_join(esb_db::schema::state::table)
+                    .inner_join(esb_db::schema::faction::table)
+                    .limit(16)
+                    .load::<(Presence,State,Faction)>(&connection)
+                    .expect("Error loading presence")
+            } else {
+                vec![]
+            }
+        };
+        for (p,s,f) in presence {
+            println!("{} {}: {}", p.influence.unwrap_or(0.0), f.name, s.name);
         }
     } else {
         println!("Not found.");

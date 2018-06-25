@@ -55,7 +55,7 @@ fn main() {
             use esb_db::schema::system::dsl::*;
             system.filter(id.eq(s.id))
                 .limit(1)
-                .load::<System>(&connection)
+                .first::<System>(&connection)
                 .expect("Error loading system")
         };
 
