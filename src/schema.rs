@@ -137,22 +137,53 @@ table! {
     }
 }
 
+table! {
+    rich_system (id) {
+        id -> Int4,
+        name -> Varchar,
+        security_id -> Nullable<Int4>,
+        security -> Nullable<Varchar>,
+        needs_permit -> Nullable<Bool>,
+        x -> Float8,
+        y -> Float8,
+        z -> Float8,
+        simbad_ref -> Nullable<Varchar>,
+        reserve_type_id -> Nullable<Int4>,
+        reserve_type -> Nullable<Varchar>,
+        is_populated -> Nullable<Bool>,
+        edsm_id -> Nullable<Int4>,
+        updated_at -> Nullable<Timestamptz>,
+    }
+}
+
 joinable!(controlling -> faction (faction_id));
 joinable!(controlling -> rich_faction (faction_id));
 joinable!(controlling -> system (system_id));
+joinable!(controlling -> rich_system (system_id));
+
 joinable!(faction -> allegiance (allegiance_id));
 joinable!(faction -> government (government_id));
 joinable!(faction -> system (home_system_id));
+joinable!(faction -> rich_system (home_system_id));
+
 joinable!(faction_state -> faction (faction_id));
+joinable!(faction_state -> rich_faction (faction_id));
 joinable!(faction_state -> state (state_id));
+
 joinable!(power -> allegiance (allegiance_id));
+
 joinable!(presence -> faction (faction_id));
+joinable!(presence -> rich_faction (system_id));
 joinable!(presence -> state (state_id));
 joinable!(presence -> system (system_id));
+joinable!(presence -> rich_system (system_id));
+
 joinable!(system -> reserve_type (reserve_type_id));
 joinable!(system -> security (security_id));
+
 joinable!(system_power -> power_state (power_state_id));
 joinable!(system_power -> system (system_id));
+joinable!(system_power -> rich_system (system_id));
 
 allow_tables_to_appear_in_same_query!(
     allegiance,
@@ -166,9 +197,9 @@ allow_tables_to_appear_in_same_query!(
     presence,
     reserve_type,
     rich_faction,
+    rich_system,
     security,
     state,
     system,
     system_power,
 );
-
