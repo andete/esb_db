@@ -48,7 +48,8 @@ fn main() {
         let power_state_name = json_system.power_state.clone();
         let allegiance_id = json_system.allegiance_id;
         let power_name = json_system.allegiance.clone();
-        let mut s:System = json_system.into();
+        let presences = json_system.minor_faction_presences.clone();
+        let s:System = json_system.into();
 
         let results = {
             use esb_db::schema::system::dsl::*;
@@ -115,19 +116,18 @@ fn main() {
         // check if the Power state has been changed and store it if needed
         {
             use esb_db::schema::system_power::dsl;
-            let results = dsl::system_power.filter(dsl::system_id.eq(s.id))
+            let result = dsl::system_power.filter(dsl::system_id.eq(s.id))
                 .order(dsl::stamp.desc())
-                .limit(1)
-                .load::<SystemPower>(&connection)
+                .first::<SystemPower>(&connection)
+                .optional()
                 .expect("Error loading system power info");
-            let (insert,first) = if results.is_empty() {
-                (true,true)
-            } else {
-                let res:&SystemPower = results.iter().next().unwrap();
+            let (insert, first) = if let Some(res) = result {
                 // check stamp as well to see if it is newer?
                 let changed = res.allegiance_id != allegiance_id
                     || res.power_state_id != power_state_id;
                 (changed, false)
+            } else {
+                (true,true)
             };
             if insert {
                 let c = SystemPowerInsert {
@@ -145,6 +145,34 @@ fn main() {
                     let state = power_state_name.unwrap_or("None".into());
                     info!("System {} new power state {}:{}", s.name, name, state);
                 }
+            }
+        }
+
+        // update faction presence information if needed
+        for p in presences {
+            use esb_db::schema::presence::dsl;
+            let result = dsl::presence
+                .filter(dsl::system_id.eq(s.id))
+                .filter(dsl::faction_id.eq(p.minor_faction_id))
+                .order(dsl::stamp.desc())
+                .first::<Presence>(&connection)
+                .expect("Error loading system faction presence");
+            let (insert, first) = if let Some(res) = result {
+                // todo: deal with stamp as well
+                let changed = res.state_id != p.state_id
+                    || res.influence != p.influence;
+                (changed, false)
+            } else {
+                (true, true)
+            };
+            if insert {
+                let pi = PresenceInsert {
+                    stamp:s.updated_at.unwrap(),
+                    system_id:s.id,
+                    faction_id:p.minor_faction_id,
+                    state_id:p.state_id,
+                    influenc:p.influence,
+                };
             }
         }
     }

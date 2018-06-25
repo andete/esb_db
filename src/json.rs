@@ -57,7 +57,7 @@ impl Into<models::System> for System {
     }
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct MinorFactionPresence {
     pub state_id:Option<i32>,
