@@ -156,6 +156,7 @@ fn main() {
                 .filter(dsl::faction_id.eq(p.minor_faction_id))
                 .order(dsl::stamp.desc())
                 .first::<Presence>(&connection)
+                .optional()
                 .expect("Error loading system faction presence");
             let (insert, first) = if let Some(res) = result {
                 // todo: deal with stamp as well
@@ -171,8 +172,17 @@ fn main() {
                     system_id:s.id,
                     faction_id:p.minor_faction_id,
                     state_id:p.state_id,
-                    influenc:p.influence,
+                    influence:p.influence,
                 };
+                diesel::insert_into(esb_db::schema::presence::table)
+                    .values(&pi)
+                    .execute(&connection)
+                    .expect("Error saving presence");
+                if !first {
+                    let inf = p.influence.unwrap_or(0.0);
+                    let state = p.state.unwrap_or("None".into());
+                    info!("System {} faction {} INF {} state {}", s.name, p.minor_faction_id, inf, state);
+                } 
             }
         }
     }
