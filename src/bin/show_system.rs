@@ -32,21 +32,23 @@ fn main() {
     let m = a.get_matches();
     let n = m.value_of("NAME").unwrap();
     
-    use esb_db::schema::system::dsl::*;
 
     let connection = establish_connection();
-    let results = system
-        .inner_join(esb_db::schema::security::table)
-        .inner_join(esb_db::schema::reserve_type::table)
-        .filter(name.eq(n))
-        .limit(1)
-        .load::<(System,Security,ReserveType)>(&connection)
-        .expect("Error loading systems");
+    
+    let system_result = {
+        use esb_db::schema::system::dsl::*;
+        system
+            .inner_join(esb_db::schema::security::table)
+            .inner_join(esb_db::schema::reserve_type::table)
+            .filter(name.eq(n))
+            .first::<(System,Security,ReserveType)>(&connection)
+            .optional()
+            .expect("Error loading systems")
+    };
 
-    if results.len() > 0 {
-        let (s,a,r) = &results[0];
-        println!("System:   {}", s.name);
-        println!("Security: {}", a.name);
+    if let Some((s,a,r)) = system_result {
+        println!("system:   {}", s.name);
+        println!("security: {}", a.name);
         println!("permit:   {}", s_o(s.needs_permit));
         println!("reserve:  {}", r.name);
     } else {
