@@ -46,20 +46,19 @@ fn main() {
         let controlling_minor_faction_name = json_system.controlling_minor_faction.clone();
         let power_state_id = json_system.power_state_id;
         let power_state_name = json_system.power_state.clone();
-        let allegiance_id = json_system.allegiance_id;
         let power_name = json_system.allegiance.clone();
         let presences = json_system.minor_faction_presences.clone();
         let s:System = json_system.into();
 
-        let results = {
+        let result = {
             use esb_db::schema::system::dsl::*;
             system.filter(id.eq(s.id))
-                .limit(1)
                 .first::<System>(&connection)
+                .optional()
                 .expect("Error loading system")
         };
 
-        let system_exists = !results.is_empty();
+        let system_exists = result.is_some();
 
         if !system_exists {
             //info!("Inserting: {:?}", s);
@@ -69,7 +68,7 @@ fn main() {
                 .expect("Error saving system");
             c_stored += 1;
         } else {
-            let existing_system = &results[0];
+            let existing_system = result.unwrap();
             if existing_system.updated_at < s.updated_at || force {
                 use esb_db::schema::system::dsl::*;
                 let _:System = diesel::update(system.filter(id.eq(s.id)))
@@ -123,8 +122,7 @@ fn main() {
                 .expect("Error loading system power info");
             let (insert, first) = if let Some(res) = result {
                 // check stamp as well to see if it is newer?
-                let changed = res.allegiance_id != allegiance_id
-                    || res.power_state_id != power_state_id;
+                let changed = res.power_state_id != power_state_id;
                 (changed, false)
             } else {
                 (true,true)
@@ -134,7 +132,6 @@ fn main() {
                     stamp:s.updated_at.unwrap(),
                     system_id:s.id,
                     power_state_id: power_state_id,
-                    allegiance_id: allegiance_id,
                 };
                 diesel::insert_into(esb_db::schema::system_power::table)
                     .values(&c)

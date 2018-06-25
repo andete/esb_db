@@ -57,16 +57,29 @@ fn main() {
             system_power
                 .filter(system_id.eq(s.id))
                 .order(stamp.desc())
-                .inner_join(esb_db::schema::allegiance::table)
                 .inner_join(esb_db::schema::power_state::table)
-                .first::<(SystemPower,Allegiance,PowerState)>(&connection)
+                .first::<(SystemPower,PowerState)>(&connection)
                 .optional()
                 .expect("Error loading system power")
         };
-        if let Some((_sp,al,po)) = sp {
-            println!("allegiance:  {}", al.name);
+        if let Some((_sp,po)) = sp {
             println!("power_state: {}", po.name);
         }
+
+        let control = {
+            use esb_db::schema::controlling::dsl::*;
+            controlling
+                .filter(system_id.eq(s.id))
+                .order(stamp.desc())
+                .inner_join(esb_db::schema::faction::table)
+                .first::<(Controlling,Faction)>(&connection)
+                .optional()
+                .expect("Error loading controlling")
+        };
+        if let Some((_,faction)) = control {
+            println!("controlling: {}", faction.name);
+        }
+        
         println!("");
         let presence = {
             use esb_db::schema::presence::dsl::*;
@@ -77,6 +90,7 @@ fn main() {
                 .optional()
                 .expect("Error loading first presence");
             if let Some(p) = p {
+                println!("{}", p.stamp.date());
                 presence
                     .filter(system_id.eq(s.id))
                     .filter(stamp.eq(p.stamp))

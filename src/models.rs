@@ -112,7 +112,6 @@ pub struct SystemPower {
     pub id:i32,
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
-    pub allegiance_id: Option<i32>,
     pub power_state_id: Option<i32>,
 }
 
@@ -121,7 +120,6 @@ pub struct SystemPower {
 pub struct SystemPowerInsert {
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
-    pub allegiance_id: Option<i32>,
     pub power_state_id: Option<i32>,
 }
 

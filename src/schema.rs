@@ -118,7 +118,6 @@ table! {
         id -> Int4,
         stamp -> Timestamptz,
         system_id -> Int4,
-        allegiance_id -> Nullable<Int4>,
         power_state_id -> Nullable<Int4>,
     }
 }
@@ -136,7 +135,6 @@ joinable!(presence -> state (state_id));
 joinable!(presence -> system (system_id));
 joinable!(system -> reserve_type (reserve_type_id));
 joinable!(system -> security (security_id));
-joinable!(system_power -> allegiance (allegiance_id));
 joinable!(system_power -> power_state (power_state_id));
 joinable!(system_power -> system (system_id));
 
