@@ -47,10 +47,24 @@ fn main() {
     };
 
     if let Some((s,a,r)) = system_result {
-        println!("system:   {}", s.name);
-        println!("security: {}", a.name);
-        println!("permit:   {}", s_o(s.needs_permit));
-        println!("reserve:  {}", r.name);
+        println!("system:      {}", s.name);
+        println!("security:    {}", a.name);
+        println!("permit:      {}", s_o(s.needs_permit));
+        println!("reserve:     {}", r.name);
+
+        use esb_db::schema::system_power::dsl::*;
+        let sp = system_power
+            .filter(system_id.eq(s.id))
+            .order(stamp.desc())
+            .inner_join(esb_db::schema::allegiance::table)
+            .inner_join(esb_db::schema::power_state::table)
+            .first::<(SystemPower,Allegiance,PowerState)>(&connection)
+            .optional()
+            .expect("Error loading system power");
+        if let Some((_sp,al,po)) = sp {
+            println!("allegiance:  {}", al.name);
+            println!("power_state: {}", po.name);
+        }
     } else {
         println!("Not found.");
     }
