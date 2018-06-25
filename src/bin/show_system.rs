@@ -7,8 +7,17 @@ use esb_db::*;
 use esb_db::models::*;
 use diesel::prelude::*;
 
-fn main() {
+use std::fmt::Display;
 
+fn s_o<'a, T:Display>(x:Option<T>) -> String {
+    if let Some(y) = x {
+        format!("{}", y)
+    } else {
+        "None".into()
+    }
+}
+
+fn main() {
 
     badlog::minimal(Some("DEBUG"));
     let a = clap::App::new("show_system")
@@ -24,20 +33,22 @@ fn main() {
     let n = m.value_of("NAME").unwrap();
     
     use esb_db::schema::system::dsl::*;
-    use esb_db::schema::security;
 
     let connection = establish_connection();
     let results = system
-        .inner_join(security::table)
+        .inner_join(esb_db::schema::security::table)
+        .inner_join(esb_db::schema::reserve_type::table)
         .filter(name.eq(n))
         .limit(1)
-        .load::<(System,Security)>(&connection)
+        .load::<(System,Security,ReserveType)>(&connection)
         .expect("Error loading systems");
 
     if results.len() > 0 {
-        for (s,a) in results {
-            println!("{:?} {:?}", s, a);
-        }
+        let (s,a,r) = &results[0];
+        println!("System:   {}", s.name);
+        println!("Security: {}", a.name);
+        println!("permit:   {}", s_o(s.needs_permit));
+        println!("reserve:  {}", r.name);
     } else {
         println!("Not found.");
     }
