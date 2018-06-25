@@ -122,7 +122,23 @@ table! {
     }
 }
 
+table! {
+    rich_faction (id) {
+        id -> Int4,
+        name -> Varchar,
+        allegiance_id -> Nullable<Int4>,
+        allegiance -> Nullable<Varchar>,
+        government_id -> Nullable<Int4>,
+        government -> Nullable<Varchar>,
+        home_system_id -> Nullable<Int4>,
+        home_system -> Nullable<Varchar>,
+        is_player_faction -> Bool,
+        updated_at -> Timestamptz,
+    }
+}
+
 joinable!(controlling -> faction (faction_id));
+joinable!(controlling -> rich_faction (faction_id));
 joinable!(controlling -> system (system_id));
 joinable!(faction -> allegiance (allegiance_id));
 joinable!(faction -> government (government_id));
@@ -149,8 +165,10 @@ allow_tables_to_appear_in_same_query!(
     power_state,
     presence,
     reserve_type,
+    rich_faction,
     security,
     state,
     system,
     system_power,
 );
+

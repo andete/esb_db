@@ -87,6 +87,20 @@ pub struct Faction {
     pub updated_at: DateTime<Utc>,
 }
 
+#[derive(Debug, Queryable)]
+pub struct RichFaction {
+    pub id:i32,
+    pub name:String,
+    pub allegiance_id: Option<i32>,
+    pub allegiance: Option<String>,
+    pub government_id: Option<i32>,
+    pub government: Option<String>,
+    pub home_system_id: Option<i32>,
+    pub home_system: Option<String>,
+    pub is_player_faction: bool,
+    pub updated_at: DateTime<Utc>,
+}
+
 #[derive(Debug,Queryable,Associations)]
 #[belongs_to(System)]
 #[table_name="controlling"]

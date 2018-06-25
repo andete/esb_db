@@ -71,13 +71,15 @@ fn main() {
             controlling
                 .filter(system_id.eq(s.id))
                 .order(stamp.desc())
-                .inner_join(esb_db::schema::faction::table)
-                .first::<(Controlling,Faction)>(&connection)
+                .inner_join(esb_db::schema::rich_faction::table)
+                .first::<(Controlling,RichFaction)>(&connection)
                 .optional()
                 .expect("Error loading controlling")
         };
         if let Some((_,faction)) = control {
             println!("controlling: {}", faction.name);
+            println!("allegiance:  {}", s_o(faction.allegiance));
+            println!("government:  {}", s_o(faction.government));
         }
         
         println!("");

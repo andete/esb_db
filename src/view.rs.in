@@ -1,0 +1,16 @@
+table! {
+    rich_faction (id) {
+        id -> Int4,
+        name -> Varchar,
+        allegiance_id -> Nullable<Int4>,
+        allegiance -> Nullable<Varchar>,
+        government_id -> Nullable<Int4>,
+        government -> Nullable<Varchar>,
+        home_system_id -> Nullable<Int4>,
+        home_system -> Nullable<Varchar>,
+        is_player_faction -> Bool,
+        updated_at -> Timestamptz,
+    }
+}
+
+joinable!(controlling -> rich_faction (faction_id));
