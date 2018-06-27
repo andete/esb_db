@@ -7,7 +7,7 @@ table! {
 
 table! {
     controlling (id) {
-        id -> Int4,
+        id -> Int8,
         stamp -> Timestamptz,
         system_id -> Int4,
         faction_id -> Nullable<Int4>,
@@ -35,7 +35,7 @@ table! {
 
 table! {
     faction_state (id) {
-        id -> Int4,
+        id -> Int8,
         stamp -> Timestamptz,
         faction_id -> Int4,
         state_id -> Int4,
@@ -66,7 +66,7 @@ table! {
 
 table! {
     presence (id) {
-        id -> Int4,
+        id -> Int8,
         stamp -> Timestamptz,
         system_id -> Int4,
         faction_id -> Int4,
@@ -115,7 +115,7 @@ table! {
 
 table! {
     system_power (id) {
-        id -> Int4,
+        id -> Int8,
         stamp -> Timestamptz,
         system_id -> Int4,
         power_state_id -> Nullable<Int4>,

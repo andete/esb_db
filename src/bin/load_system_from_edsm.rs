@@ -4,6 +4,8 @@ extern crate esb_db;
 extern crate diesel;
 extern crate badlog;
 extern crate clap;
+#[macro_use]
+extern crate log;
 extern crate reqwest;
 extern crate serde_json;
 
@@ -38,9 +40,16 @@ fn main() {
             .expect("Error loading system")
     };
 
-    let edsm_id = system_result
-        .expect("system not found")
-        .edsm_id.expect("edsm id missing");
+    if system_result.is_none() {
+        error!("System not found in database: {}", n);
+        return;
+    }
+    let edsm_id_opt = system_result.unwrap().edsm_id;
+    if edsm_id_opt.is_none() {
+        error!("System has no edsm id: {}", n);
+        return;
+    }
+    let edsm_id = edsm_id_opt.unwrap();
 
     let url = format!("https://www.edsm.net/api-system-v1/factions/?systemId={}&showHistory=1", edsm_id);
     let client = reqwest::Client::new();
@@ -52,4 +61,8 @@ fn main() {
 
     let system:esb_db::edsm::System = serde_json::from_str(&res).unwrap();
     println!("system: {:?}", system);
+
+    // update Controlling
+
+    // update Faction states (state, pending, recovery)
 }

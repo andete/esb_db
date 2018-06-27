@@ -105,7 +105,7 @@ pub struct RichFaction {
 #[belongs_to(System)]
 #[table_name="controlling"]
 pub struct Controlling {
-    pub id:i32,
+    pub id:i64,
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
     pub faction_id: Option<i32>,
@@ -123,7 +123,7 @@ pub struct ControllingInsert {
 #[belongs_to(System)]
 #[table_name="system_power"]
 pub struct SystemPower {
-    pub id:i32,
+    pub id:i64,
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
     pub power_state_id: Option<i32>,
@@ -141,7 +141,7 @@ pub struct SystemPowerInsert {
 #[belongs_to(Faction)]
 #[table_name="faction_state"]
 pub struct FactionState {
-    pub id:i32,
+    pub id:i64,
     pub stamp: DateTime<Utc>,
     pub faction_id: i32,
     pub state_id: i32,
@@ -159,7 +159,7 @@ pub struct FactionStateInsert {
 #[belongs_to(System)]
 #[table_name="presence"]
 pub struct Presence {
-    pub id:i32,
+    pub id:i64,
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
     pub faction_id: i32,
