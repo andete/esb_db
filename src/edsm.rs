@@ -35,11 +35,11 @@ pub struct FactionInfo {
     #[serde(rename="pendingStates")]
     pub pending_states: Vec<StateTrend>,
     #[serde(rename="pendingStatesHistory")]
-    pub pending_states_history:HashMap<i64,StateTrend>,
+    pub pending_states_history:HashMap<i64,Vec<StateTrend>>,
     #[serde(rename="recoveringStates")]
     pub recovering_states: Vec<StateTrend>,
     #[serde(rename="recoveringStatesHistory")]
-    pub recovering_states_history:HashMap<i64,StateTrend>,
+    pub recovering_states_history:HashMap<i64,Vec<StateTrend>>,
     #[serde(rename="influenceHistory")]
     pub influence_history:HashMap<i64,f32>,
     #[serde(rename="lastUpdate")]
