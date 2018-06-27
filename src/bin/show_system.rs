@@ -1,3 +1,5 @@
+// (c) 2018 Joost Yervante Damad <joost@damad.be>
+
 extern crate esb_db;
 extern crate diesel;
 extern crate badlog;
@@ -48,6 +50,7 @@ fn main() {
 
     if let Some((s,a,r)) = system_result {
         println!("system:      {}", s.name);
+        println!("esdm_id:     {}", s_o(s.edsm_id));
         println!("security:    {}", a.name);
         println!("permit:      {}", s_o(s.needs_permit));
         println!("reserve:     {}", r.name);

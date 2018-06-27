@@ -1,3 +1,5 @@
+// (c) 2018 Joost Yervante Damad <joost@damad.be>
+
 use chrono::{DateTime, Utc, TimeZone};
 use serde::{Deserialize, Deserializer};
 
@@ -97,7 +99,7 @@ impl Into<models::Faction> for Faction {
     }
 }
 
-fn deserialize_datetime<'de, D>(deserializer:D) -> Result<DateTime<Utc>, D::Error>
+pub fn deserialize_datetime<'de, D>(deserializer:D) -> Result<DateTime<Utc>, D::Error>
     where D: Deserializer<'de>
 {
     let i = i64::deserialize(deserializer)?;

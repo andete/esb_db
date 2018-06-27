@@ -1,3 +1,5 @@
+// (c) 2018 Joost Yervante Damad <joost@damad.be>
+
 extern crate esb_db;
 extern crate diesel;
 

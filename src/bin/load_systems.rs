@@ -1,3 +1,5 @@
+// (c) 2018 Joost Yervante Damad <joost@damad.be>
+
 extern crate badlog;
 #[macro_use]
 extern crate log;

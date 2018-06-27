@@ -21,6 +21,7 @@ pub fn establish_connection() -> PgConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
+pub mod edsm;
 pub mod json;
 pub mod models;
 pub mod schema;
