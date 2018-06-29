@@ -6,7 +6,7 @@ extern crate badlog;
 extern crate clap;
 
 use esb_db::*;
-use esb_db::models::*;
+use esb_db::model::*;
 use diesel::prelude::*;
 
 use std::fmt::Display;

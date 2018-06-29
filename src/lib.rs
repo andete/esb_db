@@ -2,6 +2,8 @@
 extern crate diesel;
 extern crate dotenv;
 extern crate chrono;
+#[macro_use]
+extern crate log;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -21,7 +23,8 @@ pub fn establish_connection() -> PgConnection {
         .expect(&format!("Error connecting to {}", database_url))
 }
 
+pub mod calculate;
 pub mod edsm;
 pub mod json;
-pub mod models;
+pub mod model;
 pub mod schema;

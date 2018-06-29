@@ -31,7 +31,7 @@ pub struct FactionInfo {
     pub influence:f32,
     pub state: String,
     #[serde(rename="stateHistory")]
-    pub state_gistory:HashMap<i64,String>,
+    pub state_history:HashMap<i64,String>,
     #[serde(rename="pendingStates")]
     pub pending_states: Vec<StateTrend>,
     #[serde(rename="pendingStatesHistory")]
@@ -60,4 +60,10 @@ pub struct ControllingFactionInfo {
     pub government:String,
     pub id:i32,
     pub name:String,
+}
+
+impl System {
+    pub fn last_update(&self) -> Option<i64> {
+        self.factions.iter().map(|f| f.last_update).max()
+    }
 }

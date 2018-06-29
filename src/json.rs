@@ -3,7 +3,7 @@
 use chrono::{DateTime, Utc, TimeZone};
 use serde::{Deserialize, Deserializer};
 
-use models;
+use model;
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -40,9 +40,9 @@ pub struct System {
     pub minor_faction_presences:Vec<MinorFactionPresence>,
 }
 
-impl Into<models::System> for System {
-    fn into(self) -> models::System {
-        models::System {
+impl Into<model::System> for System {
+    fn into(self) -> model::System {
+        model::System {
             id:self.id,
             name:self.name,
             security_id:self.security_id,
@@ -85,9 +85,9 @@ pub struct Faction {
     pub updated_at: DateTime<Utc>,
 }
 
-impl Into<models::Faction> for Faction {
-    fn into(self) -> models::Faction {
-        models::Faction {
+impl Into<model::Faction> for Faction {
+    fn into(self) -> model::Faction {
+        model::Faction {
             id:self.id,
             name:self.name,
             allegiance_id:self.allegiance_id,

@@ -4,7 +4,7 @@ extern crate esb_db;
 extern crate diesel;
 
 use self::esb_db::*;
-use self::models::*;
+use self::model::*;
 use self::diesel::prelude::*;
 
 fn main() {

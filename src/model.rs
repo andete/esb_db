@@ -2,63 +2,66 @@ use chrono::{DateTime, Utc};
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 
-use super::schema::controlling;
-use super::schema::faction;
-use super::schema::faction_state;
-use super::schema::presence;
-use super::schema::system;
-use super::schema::system_power;
+use schema::*;
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="allegiance"]
 pub struct Allegiance {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="economy"]
 pub struct Economy {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="government"]
 pub struct Government {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="power"]
 pub struct Power {
     pub id: i32,
     pub name: String,
     pub allegiance_id: i32,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="power_state"]
 pub struct PowerState {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="reserve_type"]
 pub struct ReserveType {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="security"]
 pub struct Security {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="state"]
 pub struct State {
     pub id: i32,
     pub name: String,
 }
 
-#[derive(Debug, Queryable, Insertable, AsChangeset)]
+#[derive(Debug, Identifiable, Queryable, Insertable, AsChangeset)]
 #[table_name="system"]
 pub struct System {
     pub id: i32,
@@ -75,7 +78,7 @@ pub struct System {
     pub updated_at: Option<DateTime<Utc>>,
 }
 
-#[derive(Debug, Queryable, Insertable, AsChangeset)]
+#[derive(Debug, Identifiable, Queryable, Insertable, AsChangeset)]
 #[table_name="faction"]
 pub struct Faction {
     pub id:i32,
@@ -87,7 +90,8 @@ pub struct Faction {
     pub updated_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Identifiable, Queryable)]
+#[table_name="rich_faction"]
 pub struct RichFaction {
     pub id:i32,
     pub name:String,
@@ -101,7 +105,7 @@ pub struct RichFaction {
     pub updated_at: DateTime<Utc>,
 }
 
-#[derive(Debug,Queryable,Associations)]
+#[derive(Debug, Identifiable, Queryable, Associations)]
 #[belongs_to(System)]
 #[table_name="controlling"]
 pub struct Controlling {
@@ -119,7 +123,7 @@ pub struct ControllingInsert {
     pub faction_id: Option<i32>,
 }
 
-#[derive(Debug,Queryable,Associations)]
+#[derive(Debug, Identifiable, Queryable, Associations)]
 #[belongs_to(System)]
 #[table_name="system_power"]
 pub struct SystemPower {
@@ -137,7 +141,7 @@ pub struct SystemPowerInsert {
     pub power_state_id: Option<i32>,
 }
 
-#[derive(Debug,Queryable,Associations)]
+#[derive(Debug, Identifiable, Queryable, Associations)]
 #[belongs_to(Faction)]
 #[table_name="faction_state"]
 pub struct FactionState {
@@ -155,7 +159,7 @@ pub struct FactionStateInsert {
     pub state_id: i32,
 }
 
-#[derive(Debug,Queryable,Associations)]
+#[derive(Debug, Identifiable, Queryable, Associations)]
 #[belongs_to(System)]
 #[table_name="presence"]
 pub struct Presence {
@@ -188,5 +192,32 @@ impl Faction {
         } else {
             Ok(None)
         }
+    }
+
+}
+
+impl System {
+    pub fn by_name(connection:&PgConnection, n:&str) -> QueryResult<Option<System>> {
+        use schema::system::dsl::{system,name};
+        system
+            .filter(name.eq(n))
+            .first::<System>(connection)
+            .optional()
+    }
+
+    pub fn by_edsm_id(connection:&PgConnection, id:i32) -> QueryResult<Option<System>> {
+        use schema::system::dsl::{system,edsm_id};
+        system
+            .filter(edsm_id.eq(id))
+            .first::<System>(connection)
+            .optional()
+    }
+    
+    pub fn last_controlling(&self, connection:&PgConnection) -> QueryResult<Option<Controlling>> {
+        use schema::controlling::dsl::stamp;
+        Controlling::belonging_to(self)
+            .order(stamp.desc())
+            .first(connection)
+            .optional()
     }
 }

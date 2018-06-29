@@ -10,8 +10,7 @@ extern crate reqwest;
 extern crate serde_json;
 
 use esb_db::*;
-use esb_db::models::*;
-use diesel::prelude::*;
+use esb_db::model::*;
 
 fn main() {
 
@@ -31,14 +30,8 @@ fn main() {
 
     let connection = establish_connection();
     
-    let system_result = {
-        use esb_db::schema::system::dsl::*;
-        system
-            .filter(name.eq(n))
-            .first::<System>(&connection)
-            .optional()
-            .expect("Error loading system")
-    };
+    let system_result = System::by_name(&connection, n)
+        .expect("Error loading system");
 
     if system_result.is_none() {
         error!("System not found in database: {}", n);
@@ -62,7 +55,5 @@ fn main() {
     let system:esb_db::edsm::System = serde_json::from_str(&res).unwrap();
     println!("system: {:?}", system);
 
-    // update Controlling
-
-    // update Faction states (state, pending, recovery)
+    esb_db::calculate::process_edsm_system(&connection, &system).unwrap();
 }
