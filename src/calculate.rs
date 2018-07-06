@@ -60,14 +60,36 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
         info!("Controlling faction updated in {}: {}", system.name, faction_name);
     }
     
-    // 2. Update faction states (state, pending, recovery)
+    // 2. Update faction presence (state, pending, recovery)
     // for now only insert latest
     // at some point we may want to inspect the whole history as well
     for faction in &system.factions {
+        let state = State::by_name(connection, &faction.state)?.unwrap();
         let db_faction_opt = Faction::exists(connection, faction.id)?;
         if db_faction_opt.is_none() {
             info!("Faction not known in db: {}", faction_name);
             continue;
+        }
+        // let db_faction = db_faction_opt.unwrap();
+        let mut insert_presence = true;
+        if let Some(presence) = db_system.last_presence(connection, faction_id)? {
+            insert_presence =
+                presence.stamp < edsm_stamp
+                && (presence.state_id != Some(state.id) ||
+                    presence.influence != Some(faction.influence))
+        }
+        if insert_presence {
+        let ci = PresenceInsert {
+            stamp:edsm_stamp,
+            system_id:system.id,
+            faction_id:faction.id,
+            state_id:Some(state.id),
+            influence:Some(faction.influence),
+        };
+        diesel::insert_into(::schema::presence::table)
+            .values(&ci)
+            .execute(connection)?;
+        info!("Faction presence updated: {}: {} {} {}", system.name, faction_name, faction.state, faction.influence);
         }
     }
     Ok(())

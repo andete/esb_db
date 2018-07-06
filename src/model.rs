@@ -61,6 +61,15 @@ pub struct State {
     pub name: String,
 }
 
+impl State {
+    pub fn by_name(connection:&PgConnection, n:&str) -> QueryResult<Option<State>> {
+        use schema::state::dsl::{state,name};
+        state.filter(name.eq(n))
+            .first::<State>(connection)
+            .optional()
+    }
+}
+
 #[derive(Debug, Identifiable, Queryable, Insertable, AsChangeset)]
 #[table_name="system"]
 pub struct System {
@@ -141,6 +150,8 @@ pub struct SystemPowerInsert {
     pub power_state_id: Option<i32>,
 }
 
+// Faction wide state, faction also has a state
+// on a system level
 #[derive(Debug, Identifiable, Queryable, Associations)]
 #[belongs_to(Faction)]
 #[table_name="faction_state"]
@@ -194,6 +205,14 @@ impl Faction {
         }
     }
 
+    pub fn last_faction_state(&self, connection:&PgConnection) -> QueryResult<Option<FactionState>> {
+        use schema::faction_state::dsl::stamp;
+        FactionState::belonging_to(self)
+            .order(stamp.desc())
+            .first(connection)
+            .optional()
+    }
+    
 }
 
 impl System {
@@ -216,6 +235,15 @@ impl System {
     pub fn last_controlling(&self, connection:&PgConnection) -> QueryResult<Option<Controlling>> {
         use schema::controlling::dsl::stamp;
         Controlling::belonging_to(self)
+            .order(stamp.desc())
+            .first(connection)
+            .optional()
+    }
+    
+    pub fn last_presence(&self, connection:&PgConnection, f_id:i32) -> QueryResult<Option<Presence>> {
+        use schema::presence::dsl::{stamp,faction_id};
+        Presence::belonging_to(self)
+            .filter(faction_id.eq(f_id))
             .order(stamp.desc())
             .first(connection)
             .optional()
