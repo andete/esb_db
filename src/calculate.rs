@@ -76,7 +76,7 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
             insert_presence =
                 presence.stamp < edsm_stamp
                 && (presence.state_id != Some(state.id) ||
-                    presence.influence != Some(faction.influence))
+                    presence.influence != faction.influence)
         }
         if insert_presence {
         let ci = PresenceInsert {
@@ -84,7 +84,7 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
             system_id:system.id,
             faction_id:faction.id,
             state_id:Some(state.id),
-            influence:Some(faction.influence),
+            influence:faction.influence,
         };
         diesel::insert_into(::schema::presence::table)
             .values(&ci)

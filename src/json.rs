@@ -63,7 +63,8 @@ impl Into<model::System> for System {
 #[serde(deny_unknown_fields)]
 pub struct MinorFactionPresence {
     pub state_id:Option<i32>,
-    pub influence:Option<f32>,
+    #[serde(default)]
+    pub influence:f32,
     pub minor_faction_id:i32,
     pub state:Option<String>,
 }

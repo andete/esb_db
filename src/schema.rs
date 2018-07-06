@@ -71,7 +71,7 @@ table! {
         system_id -> Int4,
         faction_id -> Int4,
         state_id -> Nullable<Int4>,
-        influence -> Nullable<Float4>,
+        influence -> Float4,
     }
 }
 

@@ -179,7 +179,7 @@ pub struct Presence {
     pub system_id: i32,
     pub faction_id: i32,
     pub state_id: Option<i32>,
-    pub influence: Option<f32>,
+    pub influence: f32,
 }
 
 #[derive(Debug, Insertable)]
@@ -189,7 +189,7 @@ pub struct PresenceInsert {
     pub system_id: i32,
     pub faction_id: i32,
     pub state_id: Option<i32>,
-    pub influence: Option<f32>,
+    pub influence: f32,
 }
 
 impl Faction {

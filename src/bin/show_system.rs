@@ -110,7 +110,7 @@ fn main() {
             }
         };
         for (p,s,f) in presence {
-            println!("{} {}: {}", p.influence.unwrap_or(0.0), f.name, s.name);
+            println!("{} {}: {}", p.influence, f.name, s.name);
         }
     } else {
         println!("Not found.");

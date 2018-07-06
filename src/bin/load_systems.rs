@@ -178,9 +178,8 @@ fn main() {
                     .execute(&connection)
                     .expect("Error saving presence");
                 if !first {
-                    let inf = p.influence.unwrap_or(0.0);
                     let state = p.state.unwrap_or("None".into());
-                    info!("System {} faction {} INF {} state {}", s.name, p.minor_faction_id, inf, state);
+                    info!("System {} faction {} INF {} state {}", s.name, p.minor_faction_id, p.influence, state);
                 } 
             }
         }
