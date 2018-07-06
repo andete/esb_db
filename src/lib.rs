@@ -1,3 +1,5 @@
+// (c) 2018 Joost Yervante Damad <joost@damad.be>
+
 #[macro_use]
 extern crate diesel;
 extern crate dotenv;
@@ -22,6 +24,8 @@ pub fn establish_connection() -> PgConnection {
     PgConnection::establish(&database_url)
         .expect(&format!("Error connecting to {}", database_url))
 }
+
+// println!("{}", diesel::query_builder::debug_query::<diesel::pg::Pg, _>(&query));
 
 pub mod calculate;
 pub mod edsm;

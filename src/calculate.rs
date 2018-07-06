@@ -30,7 +30,6 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
         info!("Faction not known in db: {}", faction_name);
         return Ok(())
     }
-    let db_faction = db_faction_opt.unwrap();
 
     // get db system by id
     let db_system_opt = System::by_edsm_id(connection, system.id)?;
@@ -42,6 +41,7 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
 
     let mut insert_controlling = false;
     if let Some(controlling) = db_system.last_controlling(connection)? {
+        // TODO: deal with noise at the border of the tick
         if controlling.stamp < edsm_stamp && controlling.faction_id != Some(faction_id) {
             insert_controlling = true;
         }
@@ -61,6 +61,14 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
     }
     
     // 2. Update faction states (state, pending, recovery)
-    //
+    // for now only insert latest
+    // at some point we may want to inspect the whole history as well
+    for faction in &system.factions {
+        let db_faction_opt = Faction::exists(connection, faction.id)?;
+        if db_faction_opt.is_none() {
+            info!("Faction not known in db: {}", faction_name);
+            continue;
+        }
+    }
     Ok(())
 }

@@ -53,7 +53,7 @@ fn main() {
     /* let res = include_str!("../../edsm_azrael_hist_f.json"); */
 
     let system:esb_db::edsm::System = serde_json::from_str(&res).unwrap();
-    println!("system: {:?}", system);
+    debug!("system: {:?}", system);
 
     esb_db::calculate::process_edsm_system(&connection, &system).unwrap();
 }
