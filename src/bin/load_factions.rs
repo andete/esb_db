@@ -34,7 +34,7 @@ fn main() {
     let force = m.is_present("force");
     
     let f = File::open(&n).unwrap();
-    let json_factions:Vec<json::Faction> = serde_json::from_reader(f).unwrap();
+    let json_factions:Vec<eddb::Faction> = serde_json::from_reader(f).unwrap();
     info!("{} factions loaded into memory.", json_factions.len());
     
     use esb_db::schema::faction::dsl::*;

@@ -29,6 +29,6 @@ pub fn establish_connection() -> PgConnection {
 
 pub mod calculate;
 pub mod edsm;
-pub mod json;
+pub mod eddb;
 pub mod model;
 pub mod schema;

@@ -34,7 +34,7 @@ fn main() {
     let force = m.is_present("force");
     
     let f = File::open(&n).unwrap();
-    let json_systems:Vec<json::System> = serde_json::from_reader(f).unwrap();
+    let json_systems:Vec<eddb::System> = serde_json::from_reader(f).unwrap();
     info!("{} systems loaded into memory.", json_systems.len());
     
     use esb_db::schema::system;
