@@ -103,7 +103,7 @@ fn main() {
                     .inner_join(esb_db::schema::state::table)
                     .inner_join(esb_db::schema::faction::table)
                     .limit(16)
-                    .load::<(Presence,State,Faction)>(&connection)
+                    .load::<(Presence,DbState,Faction)>(&connection)
                     .expect("Error loading presence")
             } else {
                 vec![]

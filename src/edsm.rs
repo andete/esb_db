@@ -2,6 +2,8 @@
 
 use std::collections::HashMap;
 
+use model::State;
+
 // public static String factionUrl = 'https://www.edsm.net/api-system-v1/    factions/?systemId=${edsmSystemId}&showHistory=1"
 
 // Azrael:
@@ -29,7 +31,7 @@ pub struct FactionInfo {
     #[serde(rename="isPlayer")]
     pub is_player: bool,
     pub influence:f32,
-    pub state: String,
+    pub state: State,
     #[serde(rename="stateHistory")]
     pub state_history:HashMap<i64,String>,
     #[serde(rename="pendingStates")]
@@ -49,7 +51,7 @@ pub struct FactionInfo {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct StateTrend {
-    pub state:String,
+    pub state:State,
     pub trend:i8,
 }
 

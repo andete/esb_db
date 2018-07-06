@@ -56,17 +56,40 @@ pub struct Security {
 
 #[derive(Debug, Identifiable, Queryable)]
 #[table_name="state"]
-pub struct State {
+pub struct DbState {
     pub id: i32,
     pub name: String,
 }
 
+#[derive(Debug, PartialEq, Deserialize, Clone)]
+pub enum State {
+    Gone        = 0,  // 0x00
+    Boom        = 16, // 0x10
+    Bust        = 32, // 0x20
+    Famine      = 37, // 0x25
+    #[serde(rename="Civil Unrest")]
+    CivilUnrest = 48, // 0x30
+    #[serde(rename="Civil War")]
+    CivilWar    = 64, // 0x40
+    Election    = 65, // 0x41
+    Expansion   = 67, // 0x43
+    Lockdown    = 69, // 0x45
+    Outbreak    = 72, // 0x48
+    War         = 73, // 0x49
+    None        = 80, // 0x50
+    Retreat     = 96, // 0x60
+    Investment  = 101,// 0x65
+}
+
+impl Default for State {
+    fn default() -> State {
+        State::Gone
+    }
+}
+
 impl State {
-    pub fn by_name(connection:&PgConnection, n:&str) -> QueryResult<Option<State>> {
-        use schema::state::dsl::{state,name};
-        state.filter(name.eq(n))
-            .first::<State>(connection)
-            .optional()
+    pub fn id(&self) -> i32 {
+        self.clone() as i32
     }
 }
 
@@ -178,7 +201,7 @@ pub struct Presence {
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
     pub faction_id: i32,
-    pub state_id: Option<i32>,
+    pub state_id: i32,
     pub influence: f32,
 }
 
@@ -188,7 +211,7 @@ pub struct PresenceInsert {
     pub stamp: DateTime<Utc>,
     pub system_id: i32,
     pub faction_id: i32,
-    pub state_id: Option<i32>,
+    pub state_id: i32,
     pub influence: f32,
 }
 

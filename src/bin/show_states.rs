@@ -13,7 +13,7 @@ fn main() {
     let connection = establish_connection();
     let results = state
         .limit(50)
-        .load::<State>(&connection)
+        .load::<DbState>(&connection)
         .expect("Error loading states");
 
     println!("Displaying {} states", results.len());

@@ -70,7 +70,7 @@ table! {
         stamp -> Timestamptz,
         system_id -> Int4,
         faction_id -> Int4,
-        state_id -> Nullable<Int4>,
+        state_id -> Int4,
         influence -> Float4,
     }
 }

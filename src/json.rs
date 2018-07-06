@@ -4,6 +4,7 @@ use chrono::{DateTime, Utc, TimeZone};
 use serde::{Deserialize, Deserializer};
 
 use model;
+use model::State;
 
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -13,8 +14,10 @@ pub struct System {
     pub population:Option<i64>,
     pub allegiance_id: Option<i32>,
     pub allegiance:Option<String>,
-    pub state_id: Option<i32>,
-    pub state:Option<String>,
+    #[serde(default)]
+    pub state_id: i32,
+    #[serde(default)]
+    pub state:State,
     pub government_id: Option<i32>,
     pub government:Option<String>,
     pub security_id: Option<i32>,
@@ -62,11 +65,12 @@ impl Into<model::System> for System {
 #[derive(Debug, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct MinorFactionPresence {
-    pub state_id:Option<i32>,
+    #[serde(default)]
+    pub state_id:i32,
     #[serde(default)]
     pub influence:f32,
     pub minor_faction_id:i32,
-    pub state:Option<String>,
+    pub state:State,
 }
 
 #[derive(Debug, Deserialize)]
@@ -76,8 +80,10 @@ pub struct Faction {
     pub name:String,
     pub allegiance_id: Option<i32>,
     pub allegiance: Option<String>,
-    pub state_id: Option<i32>,
-    pub state: Option<String>,
+    #[serde(default)]
+    pub state_id: i32,
+    #[serde(default)]
+    pub state: State,
     pub government_id: Option<i32>,
     pub government: Option<String>,
     pub home_system_id: Option<i32>,

@@ -64,7 +64,6 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
     // for now only insert latest
     // at some point we may want to inspect the whole history as well
     for faction in &system.factions {
-        let state = State::by_name(connection, &faction.state)?.unwrap();
         let db_faction_opt = Faction::exists(connection, faction.id)?;
         if db_faction_opt.is_none() {
             info!("Faction not known in db: {}", faction_name);
@@ -75,7 +74,7 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
         if let Some(presence) = db_system.last_presence(connection, faction_id)? {
             insert_presence =
                 presence.stamp < edsm_stamp
-                && (presence.state_id != Some(state.id) ||
+                && (presence.state_id != faction.state.id() ||
                     presence.influence != faction.influence)
         }
         if insert_presence {
@@ -83,13 +82,13 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
             stamp:edsm_stamp,
             system_id:system.id,
             faction_id:faction.id,
-            state_id:Some(state.id),
+            state_id:faction.state.id(),
             influence:faction.influence,
         };
         diesel::insert_into(::schema::presence::table)
             .values(&ci)
             .execute(connection)?;
-        info!("Faction presence updated: {}: {} {} {}", system.name, faction_name, faction.state, faction.influence);
+        info!("Faction presence updated: {}: {} {:?} {}", system.name, faction_name, faction.state, faction.influence);
         }
     }
     Ok(())
