@@ -66,12 +66,12 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
     for faction in &system.factions {
         let db_faction_opt = Faction::exists(connection, faction.id)?;
         if db_faction_opt.is_none() {
-            info!("Faction not known in db: {}", faction_name);
+            info!("Faction not known in db: {}", faction.name);
             continue;
         }
         // let db_faction = db_faction_opt.unwrap();
         let mut insert_presence = true;
-        if let Some(presence) = db_system.last_presence(connection, faction_id)? {
+        if let Some(presence) = db_system.last_presence(connection, faction.id)? {
             insert_presence =
                 presence.stamp < edsm_stamp
                 && (presence.state_id != faction.state.id() ||
@@ -88,7 +88,7 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
         diesel::insert_into(::schema::presence::table)
             .values(&ci)
             .execute(connection)?;
-        info!("Faction presence updated: {}: {} {:?} {}", system.name, faction_name, faction.state, faction.influence);
+        info!("Faction presence updated: {}: {} {:?} {}", system.name, faction.name, faction.state, faction.influence);
         }
     }
     Ok(())

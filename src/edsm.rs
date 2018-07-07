@@ -4,6 +4,8 @@ use std::collections::HashMap;
 
 use model::State;
 
+use serde::{Deserialize, Deserializer};
+
 // public static String factionUrl = 'https://www.edsm.net/api-system-v1/    factions/?systemId=${edsmSystemId}&showHistory=1"
 
 // Azrael:
@@ -31,6 +33,7 @@ pub struct FactionInfo {
     #[serde(rename="isPlayer")]
     pub is_player: bool,
     pub influence:f32,
+    #[serde(deserialize_with = "edsm_state")]
     pub state: State,
     #[serde(rename="stateHistory")]
     pub state_history:HashMap<i64,String>,
@@ -51,6 +54,7 @@ pub struct FactionInfo {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct StateTrend {
+    #[serde(deserialize_with = "edsm_state")]
     pub state:State,
     pub trend:i8,
 }
@@ -67,5 +71,29 @@ pub struct ControllingFactionInfo {
 impl System {
     pub fn last_update(&self) -> Option<i64> {
         self.factions.iter().map(|f| f.last_update).max()
+    }
+}
+
+pub fn edsm_state<'de, D>(deserializer:D) -> Result<State, D::Error>
+    where D: Deserializer<'de>
+{
+    match Option::<String>::deserialize(deserializer)? {
+        None => Ok(State::default()),
+        Some(a) => Ok(match a.to_lowercase().as_str() {
+            "expansion" => State::Expansion,
+            "war" => State::War,
+            "civil unrest" | "civilunrest" => State::CivilUnrest,
+            "civil war" | "civilwar" => State::CivilWar,
+            "election" => State::Election,
+            "boom" => State::Boom,
+            "bust" => State::Bust,
+            "famine" => State::Famine,
+            "lockdown" => State::Lockdown,
+            "investment" => State::Investment,
+            "retreat" => State::Retreat,
+            "outbreak" => State::Outbreak,
+            "none" => State::None,
+            x => panic!("unknown state {}", x),
+        })
     }
 }
