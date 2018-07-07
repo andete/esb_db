@@ -14,8 +14,10 @@ pub struct System {
     pub population:Option<i64>,
     pub allegiance_id: Option<i32>,
     pub allegiance:Option<String>,
+    #[serde(deserialize_with = "null_default")]
     #[serde(default)]
     pub state_id: i32,
+    #[serde(deserialize_with = "null_default")]
     #[serde(default)]
     pub state:State,
     pub government_id: Option<i32>,
@@ -65,11 +67,15 @@ impl Into<model::System> for System {
 #[derive(Debug, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct MinorFactionPresence {
+    #[serde(deserialize_with = "null_default")]
     #[serde(default)]
     pub state_id:i32,
+    #[serde(deserialize_with = "null_default")]
     #[serde(default)]
     pub influence:f32,
     pub minor_faction_id:i32,
+    #[serde(deserialize_with = "null_default")]
+    #[serde(default)]
     pub state:State,
 }
 
@@ -80,8 +86,10 @@ pub struct Faction {
     pub name:String,
     pub allegiance_id: Option<i32>,
     pub allegiance: Option<String>,
+    #[serde(deserialize_with = "null_default")]
     #[serde(default)]
     pub state_id: i32,
+    #[serde(deserialize_with = "null_default")]
     #[serde(default)]
     pub state: State,
     pub government_id: Option<i32>,
@@ -111,4 +119,15 @@ pub fn deserialize_datetime<'de, D>(deserializer:D) -> Result<DateTime<Utc>, D::
 {
     let i = i64::deserialize(deserializer)?;
     Ok(Utc.timestamp(i, 0))
+}
+
+
+pub fn null_default<'de, D, T>(deserializer:D) -> Result<T, D::Error>
+    where D: Deserializer<'de>, T:Default+Deserialize<'de>
+{
+    let i = Option::<T>::deserialize(deserializer)?;
+    match i {
+        None => Ok(T::default()),
+        Some(a) => Ok(a),
+    }
 }
