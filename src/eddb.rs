@@ -125,8 +125,7 @@ pub fn deserialize_datetime<'de, D>(deserializer:D) -> Result<DateTime<Utc>, D::
 pub fn null_default<'de, D, T>(deserializer:D) -> Result<T, D::Error>
     where D: Deserializer<'de>, T:Default+Deserialize<'de>
 {
-    let i = Option::<T>::deserialize(deserializer)?;
-    match i {
+    match Option::<T>::deserialize(deserializer)? {
         None => Ok(T::default()),
         Some(a) => Ok(a),
     }
