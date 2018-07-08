@@ -14,7 +14,8 @@ use serde::{Deserialize, Deserializer};
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct System {
-    pub id:i32,
+    #[serde(rename="id")]
+    pub edsm_id:i32,
     pub id64:i64,
     pub name:String,
     #[serde(rename="controllingFaction")]
@@ -26,7 +27,8 @@ pub struct System {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct FactionInfo {
-    pub id:i32,
+    #[serde(rename="id")]
+    pub edsm_id:i32,
     pub name:String,
     pub government:String,
     pub allegiance: String,
@@ -64,7 +66,8 @@ pub struct StateTrend {
 pub struct ControllingFactionInfo {
     pub allegiance:String,
     pub government:String,
-    pub id:i32,
+    #[serde(rename="id")]
+    pub edsm_id:i32,
     pub name:String,
 }
 

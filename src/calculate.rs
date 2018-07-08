@@ -24,15 +24,16 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
 
     // get db controlling faction by id
     let faction_name = &system.controlling_faction.name;
-    let faction_id = system.controlling_faction.id;
-    let db_faction_opt = Faction::exists(connection, faction_id)?;
+    let db_faction_opt = Faction::by_name(connection, faction_name)?;
     if db_faction_opt.is_none() {
         info!("Faction not known in db: {}", faction_name);
         return Ok(())
     }
+    let db_faction = db_faction_opt.unwrap();
+    let faction_id = db_faction.id;
 
     // get db system by id
-    let db_system_opt = System::by_edsm_id(connection, system.id)?;
+    let db_system_opt = System::by_edsm_id(connection, system.edsm_id)?;
     if db_system_opt.is_none() {
         info!("System not known in db: {}", system.name);
         return Ok(())
@@ -64,14 +65,14 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
     // for now only insert latest
     // at some point we may want to inspect the whole history as well
     for faction in &system.factions {
-        let db_faction_opt = Faction::exists(connection, faction.id)?;
+        let db_faction_opt = Faction::by_name(connection, &faction.name)?;
         if db_faction_opt.is_none() {
             info!("Faction not known in db: {}", faction.name);
             continue;
         }
-        // let db_faction = db_faction_opt.unwrap();
+        let db_faction = db_faction_opt.unwrap();
         let mut insert_presence = true;
-        if let Some(presence) = db_system.last_presence(connection, faction.id)? {
+        if let Some(presence) = db_system.last_presence(connection, db_faction.id)? {
             insert_presence =
                 presence.stamp < edsm_stamp
                 && (presence.state_id != faction.state.id() ||
@@ -80,8 +81,8 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
         if insert_presence {
         let ci = PresenceInsert {
             stamp:edsm_stamp,
-            system_id:system.id,
-            faction_id:faction.id,
+            system_id:db_system.id,
+            faction_id:db_faction.id,
             state_id:faction.state.id(),
             influence:faction.influence,
         };

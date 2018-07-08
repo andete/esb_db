@@ -235,6 +235,14 @@ impl Faction {
             .first(connection)
             .optional()
     }
+
+    pub fn by_name(connection:&PgConnection, n:&str) -> QueryResult<Option<Faction>> {
+        use schema::faction::dsl::{faction,name};
+        faction
+            .filter(name.eq(n))
+            .first::<Faction>(connection)
+            .optional()
+    }
     
 }
 
