@@ -27,14 +27,21 @@ fn main() {
              .short("f")
              .long("force")
              .help("force overwrite"))
+        .arg(clap::Arg::with_name("initial")
+             .short("i")
+             .long("initial")
+             .help("initial populate when factions don't exist yet"))
         ;
 
     let m = a.get_matches();
     let n = m.value_of("FILENAME").unwrap();
     let force = m.is_present("force");
+    let initial = m.is_present("initial");
     
-    let f = File::open(&n).unwrap();
-    let json_systems:Vec<eddb::System> = serde_json::from_reader(f).unwrap();
+    let json_systems:Vec<eddb::System> = {
+        let f = File::open(&n).unwrap();
+        serde_json::from_reader(f).unwrap()
+    };
     info!("{} systems loaded into memory.", json_systems.len());
     
     use esb_db::schema::system;
@@ -145,6 +152,10 @@ fn main() {
                     info!("System {} new power state {}:{}", s.name, name, state);
                 }
             }
+        }
+        
+        if initial {
+            continue;
         }
 
         // update faction presence information if needed

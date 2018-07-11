@@ -22,7 +22,8 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
     let edsm_update = last_update_opt.unwrap();
     let edsm_stamp = Utc.timestamp(edsm_update, 0);
 
-    // get db controlling faction by id
+    // get db controlling faction by name in order
+    // to get the eddb_id
     let faction_name = &system.controlling_faction.name;
     let db_faction_opt = Faction::by_name(connection, faction_name)?;
     if db_faction_opt.is_none() {
@@ -32,7 +33,7 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
     let db_faction = db_faction_opt.unwrap();
     let faction_id = db_faction.id;
 
-    // get db system by id
+    // get db system by edsm_id
     let db_system_opt = System::by_edsm_id(connection, system.edsm_id)?;
     if db_system_opt.is_none() {
         info!("System not known in db: {}", system.name);
@@ -43,6 +44,9 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
     let mut insert_controlling = false;
     if let Some(controlling) = db_system.last_controlling(connection)? {
         // TODO: deal with noise at the border of the tick
+        // although... as there is no historic data I wonder if edsm
+        // already deals with it; guess this will start to show in
+        // practice once data starts to poor in
         if controlling.stamp < edsm_stamp && controlling.faction_id != Some(faction_id) {
             insert_controlling = true;
         }
@@ -65,12 +69,15 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
     // for now only insert latest
     // at some point we may want to inspect the whole history as well
     for faction in &system.factions {
+        // get faction by name as edsm faction id
+        // does not match eddb faction id
         let db_faction_opt = Faction::by_name(connection, &faction.name)?;
         if db_faction_opt.is_none() {
             info!("Faction not known in db: {}", faction.name);
             continue;
         }
         let db_faction = db_faction_opt.unwrap();
+        // 2.1 Presence
         let mut insert_presence = true;
         if let Some(presence) = db_system.last_presence(connection, db_faction.id)? {
             insert_presence =
@@ -91,6 +98,7 @@ pub fn process_edsm_system(connection:&PgConnection, system:&EdsmSystem) -> Quer
             .execute(connection)?;
         info!("Faction presence updated: {}: {} {:?} {}", system.name, faction.name, faction.state, faction.influence);
         }
+        // 2.2 State, Pending, Recovery
     }
     Ok(())
 }
